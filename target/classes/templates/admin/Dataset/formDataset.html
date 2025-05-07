@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une Tâche</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .form-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 20px;
+        }
+        .form-header {
+            background-color: #198754;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            margin: -30px -30px 30px -30px;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            margin-bottom: 5px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #198754;
+            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+        .btn-primary {
+            background-color: #198754;
+            border-color: #198754;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #146c43;
+            border-color: #146c43;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+        }
+        .form-icon {
+            color: #198754;
+            font-size: 1.2rem;
+            margin-right: 5px;
+        }
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        .actions-container {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav aria-label="breadcrumb" class="mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/admin/home}" class="text-decoration-none"><i class="bi bi-house-door"></i> Accueil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Ajouter une tâche</li>
+        </ol>
+    </nav>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h3 class="mb-0"><i class="bi bi-clipboard-plus"></i> Créer une nouvelle tâche</h3>
+        </div>
+
+        <form method="post" th:action="@{/admin/dataset/save}" enctype="multipart/form-data">
+            <!-- Ajout du champ pour le nom du dataset -->
+            <div class="mb-4">
+                <label for="nomDataset" class="form-label required-field">
+                    <i class="bi bi-database form-icon"></i> Nom du dataset
+                </label>
+                <input type="text" id="nomDataset" name="nomDataset" class="form-control" th:value="${dataset.nomDataset}" required>
+                <small class="text-muted">Entrez un nom pour ce dataset</small>
+            </div>
+
+            <div class="mb-4">
+                <label for="datasetFile" class="form-label mt-3 required-field">
+                    <i class="bi bi-upload form-icon"></i> Importer un dataset
+                </label>
+                <input type="file" id="datasetFile" name="datasetFile" class="form-control" required>
+                <small class="text-muted">Fichier du dataset à importer (CSV, JSON, etc.)</small>
+            </div>
+
+            <div class="mb-4">
+                <label for="classesPossibles" class="form-label required-field">
+                    <i class="bi bi-tags form-icon"></i> Classes Possibles
+                </label>
+                <input type="text" id="classesPossibles" name="classesPossibles" class="form-control" placeholder="Séparé par des virgules (ex: Positif, Négatif, Neutre)" required>
+                <small class="text-muted">Entrez les classes possibles, séparées par des virgules</small>
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="form-label required-field">
+                    <i class="bi bi-info-circle form-icon"></i> Description
+                </label>
+                <input type="text" id="description" name="description" class="form-control" th:value="${dataset.description}" required>
+                <small class="text-muted">Entrez une description</small>
+            </div>
+
+            <div class="actions-container">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Enregistrer
+                </button>
+                <a th:href="@{/admin/home}" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Annuler
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

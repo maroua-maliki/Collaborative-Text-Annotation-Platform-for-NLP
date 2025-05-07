@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Annotateurs</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body>
+    <div class="p-3 m-2">
+        <div class="card">
+            <div class="card-header">Liste des Annotateurs</div>
+            <!-- Affichage du message avec le mot de passe généré -->
+            <div th:if="${generatedPassword}" class="alert alert-success m-2">
+                <h5>Nouvel utilisateur créé avec succès!</h5>
+                <p>Login: <span th:text="${newUser.login}"></span></p>
+                <p>Mot de passe : <strong th:text="${generatedPassword}"></strong></p>
+                <p class="text-danger">Notez ce mot de passe, il ne sera plus affiché ultérieurement.</p>
+            </div>
+
+            <a class="btn btn-sm btn-info"
+               th:href="@{/admin/user/add}">
+                <i class="bi bi-plus-square-fill"></i>
+            </a>
+            <div class="card-body">
+                <form method="get" th:action="@{/admin/user/list}">
+                    <div class="mb-3 d-flex">
+                        <input type="text" name="keyword" th:value="${keyword}" class="form-control me-2" placeholder="Rechercher par nom ou prénom">
+                        <button type="submit" class="btn btn-info">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Login</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p: ${listeAnnotateur}">
+                        <td th:text="${p.id}"></td>
+                        <td th:text="${p.nom}"></td>
+                        <td th:text="${p.prenom}"></td>
+                        <td th:text="${p.login}"></td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet annotateur?')" class="btn btn-sm btn-danger"
+                                   th:href="@{/admin/user/delete(id=${p.id}, keyword=${keyword}, page=${currentPage})}">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                                <a class="btn btn-sm btn-success"
+                                   th:href="@{/admin/user/edit(id=${p.id}, keyword=${keyword}, page=${currentPage})}">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" th:if="${pages.length > 1}">
+                    <ul class="pagination justify-content-center">
+                        <li th:each="pageIndex,status : ${pages}" th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
+                            <a class="page-link" th:href="@{/admin/user/list(page=${status.index},keyword=${keyword})}"
+                               th:text="${1+status.index}"></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

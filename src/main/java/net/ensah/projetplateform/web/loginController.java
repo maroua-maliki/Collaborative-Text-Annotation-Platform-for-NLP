@@ -1,12 +1,9 @@
 package net.ensah.projetplateform.web;
 
 
-import ch.qos.logback.core.model.Model;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class loginController {
@@ -16,18 +13,20 @@ public class loginController {
         return "login";
     }
 
-    @GetMapping("/")
-    public String home() {
-        return "index";
-    }
 
     @GetMapping("/access-denied")
     public String accessDenied() {
         return "access-denied";
     }
 
-    @GetMapping("admin/home")
+    @GetMapping("/admin/home")
     public String showAdminHome(Model model) {
         return "admin/home";
     }
+
+    @GetMapping("/user/home")
+    public String showUserHome(Model model) {
+        return "user/home";
+    }
+
 }

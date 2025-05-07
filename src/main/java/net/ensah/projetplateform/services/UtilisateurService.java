@@ -23,7 +23,7 @@ public class UtilisateurService implements UserDetailsService {
         if(utilisateur == null){
             throw new UsernameNotFoundException("L'utilisateur n'existe pas");
         }
-        GrantedAuthority authority = new SimpleGrantedAuthority(utilisateur.getRole().getNomRole());
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + utilisateur.getRole().getNomRole());
         return User
                 .withUsername(login)
                 .authorities(authority)

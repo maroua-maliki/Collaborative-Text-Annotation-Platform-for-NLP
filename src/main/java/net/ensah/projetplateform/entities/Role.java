@@ -1,17 +1,16 @@
 package net.ensah.projetplateform.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.List;
 
 @Entity
-@AllArgsConstructor @NoArgsConstructor @Setter @Getter
+@AllArgsConstructor @NoArgsConstructor @Setter @Getter @ToString
 public class Role {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nomRole;
-    @OneToOne(mappedBy="role")
-    private Utilisateur utilisateur;
+    @OneToMany(mappedBy="role")
+    private List<Utilisateur> utilisateur;
 }

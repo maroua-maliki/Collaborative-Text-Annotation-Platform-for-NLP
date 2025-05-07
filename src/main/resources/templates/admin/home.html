@@ -2,9 +2,27 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Page acceuil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord</title>
 </head>
 <body>
-<h1>Bienvenue</h1>
+    <div class="container mt-4">
+        <h1>Bienvenue sur le tableau de bord</h1>
+
+        <div class="mt-4">
+            <a th:href="@{/admin/user/list}" class="btn btn-primary">
+                <i class="bi bi-people-fill"></i> Gestion des Annotateurs
+            </a>
+        </div>
+        <div class="mt-4">
+            <a th:href="@{/admin/tache/add}" class="btn btn-primary">
+                <i class="bi bi-people-fill"></i> Gestion des Taches
+            </a>
+        </div>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-danger">Logout</button>
+        </form>
+    </div>
+</div>
 </body>
 </html>

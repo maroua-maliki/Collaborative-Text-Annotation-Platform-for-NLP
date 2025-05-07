@@ -74,11 +74,14 @@ public class RedirectionAfterAuthenticationSuccessHandler implements Authenticat
         for (final GrantedAuthority grantedAuthority : authorities) {
             // Get the role name from the authority
             String authorityName = grantedAuthority.getAuthority();
+            LOGGER.debug("Autorité: " + authorityName);
+
             // If the role matches one in the map, return the corresponding target URL
             if (roleTargetUrlMap.containsKey(authorityName)) {
                 return roleTargetUrlMap.get(authorityName);
             }
         }
+        LOGGER.warn("Aucun rôle correspondant trouvé, redirection vers la page d'accueil");
         // If no matching role is found, return a default URL
         return "/login";
     }

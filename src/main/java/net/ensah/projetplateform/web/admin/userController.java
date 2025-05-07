@@ -1,5 +1,7 @@
 package net.ensah.projetplateform.web.admin;
 
+
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import net.ensah.projetplateform.entities.Annotateur;
 import net.ensah.projetplateform.entities.Role;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -37,8 +40,13 @@ public class userController {
                        @RequestParam(name = "size", defaultValue = "5") int size,
                        @RequestParam(name = "keyword", defaultValue = "") String keyword) {
 
-        Page<Annotateur> pageAnnotateur = annotateurRepository.findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(
-                keyword, keyword, PageRequest.of(page, size));
+
+        Page<Annotateur> pageAnnotateur;
+        if (keyword != null && !keyword.isEmpty()) {
+            pageAnnotateur = annotateurRepository.findActiveAnnotateursByKeyword(keyword, PageRequest.of(page, size));
+        } else {
+            pageAnnotateur = annotateurRepository.findByIsActiveTrue(PageRequest.of(page, size));
+        }
 
         model.addAttribute("listeAnnotateur", pageAnnotateur.getContent());
         model.addAttribute("pages", new int[pageAnnotateur.getTotalPages()]);
@@ -49,15 +57,22 @@ public class userController {
     }
 
     @GetMapping("/user/delete")
-    public String delete(@RequestParam(name = "id") Long id , String keyword,int page ){
-        annotateurRepository.deleteById(id);
+    @Transactional
+    public String delete(@RequestParam(name = "id") Long id, String keyword, int page) {
+        Annotateur annotateur = annotateurRepository.findById(id).orElse(null);
+        if (annotateur != null) {
+            annotateur.setIsActive(false);
+            annotateurRepository.saveAndFlush(annotateur);
+        }
         return "redirect:/admin/user/list?page="+page+"&keyword="+keyword;
     }
 
     @GetMapping("/annotateurs")
     @ResponseBody
     public List<Annotateur> listAnnotateur() {
-        return annotateurRepository.findAll();
+        return annotateurRepository.findAll().stream()
+                .filter(annotateur -> annotateur.getIsActive() != null && annotateur.getIsActive())
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/user/add")
@@ -79,6 +94,7 @@ public class userController {
         if(annotateur.getId() == null) {
             clearPassword = generateRandomPassword();
             annotateur.setPassword(passwordEncoder.encode(clearPassword));
+            annotateur.setIsActive(true); // Définir isActive à true pour les nouveaux annotateurs
 
             Role userRole = roleRepository.findById(2L).orElseThrow(() ->
                     new RuntimeException("Le rôle USER_ROLE avec ID 2 n'a pas été trouvé"));
@@ -105,12 +121,11 @@ public class userController {
         return "admin/GererUser/editUser";
     }
 
-    // Méthode pour générer un mot de passe simple avec uniquement des chiffres
     private String generateRandomPassword() {
         String digits = "0123456789";
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
-        int length = 4; // Par exemple, un mot de passe de 6 chiffres
+        int length = 4;
 
         for (int i = 0; i < length; i++) {
             int index = random.nextInt(digits.length());

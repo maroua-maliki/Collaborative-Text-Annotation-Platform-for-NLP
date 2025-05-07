@@ -8,7 +8,7 @@ import lombok.*;
 public class ClassePossible {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long textClasse;
+    private String nomClasse;
     @ManyToOne
     private Dataset dataset;
 }

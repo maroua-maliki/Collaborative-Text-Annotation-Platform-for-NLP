@@ -8,8 +8,8 @@ import lombok.*;
 public class CoupleTexte {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long texte1;
-    private Long texte2;
+    private String texte1;
+    private String texte2;
     @ManyToOne
     private Taches taches;
     @OneToOne

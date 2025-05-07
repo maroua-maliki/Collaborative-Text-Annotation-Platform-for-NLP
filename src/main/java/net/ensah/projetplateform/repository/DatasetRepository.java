@@ -1,9 +1,7 @@
 package net.ensah.projetplateform.repository;
 
 import net.ensah.projetplateform.entities.Dataset;
-import org.hibernate.type.descriptor.converter.spi.JpaAttributeConverter;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.xml.crypto.Data;
-
-public interface DatasetRepository extends JpaAttributeConverter<Dataset, Long> {
+public interface DatasetRepository extends JpaRepository<Dataset, Long> {
 }

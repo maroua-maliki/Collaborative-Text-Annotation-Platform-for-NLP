@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter une Tâche</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
@@ -80,7 +78,7 @@
 <div class="container">
     <nav aria-label="breadcrumb" class="mt-3">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/admin}" class="text-decoration-none"><i class="bi bi-house-door"></i> Accueil</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/home}" class="text-decoration-none"><i class="bi bi-house-door"></i> Accueil</a></li>
             <li class="breadcrumb-item active" aria-current="page">Ajouter une tâche</li>
         </ol>
     </nav>
@@ -90,55 +88,52 @@
             <h3 class="mb-0"><i class="bi bi-clipboard-plus"></i> Créer une nouvelle tâche</h3>
         </div>
 
-        <form method="post" th:action="@{/admin/tache/save}" th:object="${tache}" enctype="multipart/form-data">
-        <div class="mb-4">
+        <form method="post" th:action="@{/admin/dataset/save}" enctype="multipart/form-data">
+            <!-- Ajout du champ pour le nom du dataset -->
+            <div class="mb-4">
+                <label for="nomDataset" class="form-label required-field">
+                    <i class="bi bi-database form-icon"></i> Nom du dataset
+                </label>
+                <input type="text" id="nomDataset" name="nomDataset" class="form-control" th:value="${dataset.nomDataset}" required>
+                <small class="text-muted">Entrez un nom pour ce dataset</small>
+            </div>
 
-                <label for="datasetFile" class="form-label mt-3">
+            <div class="mb-4">
+                <label for="datasetFile" class="form-label mt-3 required-field">
                     <i class="bi bi-upload form-icon"></i> Importer un dataset
                 </label>
-                <input type="file" id="datasetFile" name="datasetFile" class="form-control">
-                <small class="text-muted">Vous pouvez soit sélectionner un dataset existant, soit en importer un nouveau (CSV, JSON, etc.).</small>
+                <input type="file" id="datasetFile" name="datasetFile" class="form-control" required>
+                <small class="text-muted">Fichier du dataset à importer (CSV, JSON, etc.)</small>
             </div>
 
             <div class="mb-4">
-                <label for="dateLimite" class="form-label required-field">
-                    <i class="bi bi-calendar-event form-icon"></i> Date limite
+                <label for="classesPossibles" class="form-label required-field">
+                    <i class="bi bi-tags form-icon"></i> Classes Possibles
                 </label>
-                <input id="dateLimite" type="date" class="form-control" th:field="*{dateLimite}">
-                <div class="text-danger" th:if="${#fields.hasErrors('dateLimite')}" th:errors="*{dateLimite}"></div>
-                <small class="text-muted">Date d'échéance pour terminer cette tâche</small>
+                <input type="text" id="classesPossibles" name="classesPossibles" class="form-control" placeholder="Séparé par des virgules (ex: Positif, Négatif, Neutre)" required>
+                <small class="text-muted">Entrez les classes possibles, séparées par des virgules</small>
             </div>
 
-            <!-- Sélection de l'annotateur -->
             <div class="mb-4">
-                <label for="annotateur" class="form-label required-field">
-                    <i class="bi bi-person-badge form-icon"></i> Annotateur
+                <label for="description" class="form-label required-field">
+                    <i class="bi bi-info-circle form-icon"></i> Description
                 </label>
-                <select id="annotateur" class="form-select" th:field="*{annotateur}">
-                    <option value="">-- Sélectionner un annotateur --</option>
-                    <option th:each="annotateur : ${annotateurs}"
-                            th:value="${annotateur.id}"
-                            th:text="${annotateur.nom + ' ' + annotateur.prenom}">
-                    </option>
-                </select>
-                <div class="text-danger" th:if="${#fields.hasErrors('annotateur')}" th:errors="*{annotateur}"></div>
-                <small class="text-muted">Personne responsable de cette tâche</small>
+                <input type="text" id="description" name="description" class="form-control" th:value="${dataset.description}" required>
+                <small class="text-muted">Entrez une description</small>
             </div>
 
             <div class="actions-container">
                 <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-circle"></i> Enregistrer
                 </button>
-                <a th:href="@{/admin}" class="btn btn-secondary">
+                <a th:href="@{/admin/home}" class="btn btn-secondary">
                     <i class="bi bi-x-circle"></i> Annuler
                 </a>
             </div>
         </form>
     </div>
-
 </div>
 
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

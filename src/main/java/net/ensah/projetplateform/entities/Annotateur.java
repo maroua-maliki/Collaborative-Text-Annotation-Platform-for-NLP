@@ -9,6 +9,7 @@ import java.util.List;
 @Entity
 @AllArgsConstructor @NoArgsConstructor @Setter @Getter @ToString
 public class Annotateur extends Utilisateur{
+    private Boolean isActive;
     @OneToMany(mappedBy = "annotateur")
     private List<Taches> taches;
     @OneToMany(mappedBy = "annotateur")

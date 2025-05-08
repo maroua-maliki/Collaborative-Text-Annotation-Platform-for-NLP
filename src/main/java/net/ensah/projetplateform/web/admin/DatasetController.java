@@ -7,6 +7,11 @@ import net.ensah.projetplateform.entities.ClassePossible;
 import net.ensah.projetplateform.entities.CoupleTexte;
 import net.ensah.projetplateform.entities.Dataset;
 import net.ensah.projetplateform.services.DatasetService;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,6 +38,13 @@ public class DatasetController {
 
     @Autowired
     private DatasetService datasetService;
+
+    @GetMapping("/dataset/list")
+    public String listDatasets(Model model) {
+        List<Dataset> datasets = datasetService.getAllDatasets();
+        model.addAttribute("datasets", datasets);
+        return "admin/Dataset/listDataset";
+    }
 
     @GetMapping("/dataset/ajouter")
     public String showDatasetForm(Model model) {
@@ -52,7 +65,6 @@ public class DatasetController {
         }
 
         try {
-
             List<CoupleTexte> couplesTexte = traiterFichierDataset(file, dataset);
 
             List<ClassePossible> classes = new ArrayList<>();
@@ -78,12 +90,12 @@ public class DatasetController {
     private List<CoupleTexte> traiterFichierDataset(MultipartFile file, Dataset dataset) throws IOException {
         List<CoupleTexte> coupleTextes = new ArrayList<>();
 
-        // Déterminer le type de fichier
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         dataset.setTypeFichier(fileExtension);
 
         if ("csv".equals(fileExtension)) {
+            // Traitement des fichiers CSV
             BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
             String line;
             boolean isHeader = true;
@@ -97,17 +109,39 @@ public class DatasetController {
                 String[] data = line.split(",");
                 if (data.length >= 2) {
                     CoupleTexte coupleTexte = new CoupleTexte();
-
                     coupleTexte.setTexte1(data[0].trim());
                     coupleTexte.setTexte2(data[1].trim());
-
                     coupleTexte.setDataset(dataset);
                     coupleTextes.add(coupleTexte);
                 }
             }
+        } else if ("xlsx".equals(fileExtension)) {
+            Workbook workbook = new XSSFWorkbook(file.getInputStream());
+            Sheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> rows = sheet.iterator();
+
+            if (rows.hasNext()) {
+                rows.next();
+            }
+
+            while (rows.hasNext()) {
+                Row row = rows.next();
+                if (row.getCell(0) != null && row.getCell(1) != null) {
+                    CoupleTexte coupleTexte = new CoupleTexte();
+
+                    Cell cell1 = row.getCell(0);
+                    Cell cell2 = row.getCell(1);
+
+                    coupleTexte.setTexte1(getCellValueAsString(cell1));
+                    coupleTexte.setTexte2(getCellValueAsString(cell2));
+                    coupleTexte.setDataset(dataset);
+                    coupleTextes.add(coupleTexte);
+                }
+            }
+            workbook.close();
         }
 
-        String uploadDir = "uploads/datasets/";
+        String uploadDir = "src/main/resources/static/uploads/datasets/";
         String filePath = uploadDir + UUID.randomUUID() + "_" + fileName;
 
         Path uploadPath = Paths.get(uploadDir);
@@ -120,5 +154,20 @@ public class DatasetController {
         dataset.setCheminFichierExport(filePath);
 
         return coupleTextes;
+    }
+
+    private String getCellValueAsString(Cell cell) {
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue().trim();
+            case NUMERIC:
+                return String.valueOf(cell.getNumericCellValue()).trim();
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue()).trim();
+            default:
+                return "";
+        }
+
+
     }
 }

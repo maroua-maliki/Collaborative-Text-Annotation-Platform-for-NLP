@@ -27,6 +27,11 @@ public class DatasetServiceImpl implements DatasetService {
     private CoupleTexteRepository coupleTexteRepository;
 
     @Override
+    public List<Dataset> getAllDatasets() {
+        return datasetRepository.findAll();
+    }
+
+    @Override
     @Transactional
     public void saveDataset(Dataset dataset) {
         datasetRepository.save(dataset);
@@ -53,4 +58,6 @@ public class DatasetServiceImpl implements DatasetService {
             }
         }
     }
+
+
 }

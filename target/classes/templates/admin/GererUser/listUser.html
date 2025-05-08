@@ -1,81 +1,137 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des Annotateurs</title>
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+        }
+        .card-header {
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .btn-add {
+            position: absolute;
+            right: 1.5rem;
+            top: 0.75rem;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        .action-buttons .btn {
+            transition: transform 0.2s;
+        }
+        .action-buttons .btn:hover {
+            transform: scale(1.1);
+        }
+        .alert-password {
+            border-left: 4px solid #28a745;
+        }
+        .id-badge {
+            background-color: #e9ecef;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+    </style>
 </head>
-<body>
-    <div class="p-3 m-2">
-        <div class="card">
-            <div class="card-header">Liste des Annotateurs</div>
-            <!-- Affichage du message avec le mot de passe généré -->
-            <div th:if="${generatedPassword}" class="alert alert-success m-2">
-                <h5>Nouvel utilisateur créé avec succès!</h5>
-                <p>Login: <span th:text="${newUser.login}"></span></p>
-                <p>Mot de passe : <strong th:text="${generatedPassword}"></strong></p>
-                <p class="text-danger">Notez ce mot de passe, il ne sera plus affiché ultérieurement.</p>
-            </div>
-
-            <a class="btn btn-sm btn-info"
-               th:href="@{/admin/user/add}">
-                <i class="bi bi-plus-square-fill"></i>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="card">
+        <div class="card-header position-relative bg-success bg-gradient text-white">
+            <i class="bi bi-people-fill me-2"></i>Liste des Annotateurs
+            <a class="btn btn-sm btn-light btn-add" th:href="@{/admin/user/add}">
+                <i class="bi bi-plus-square-fill me-1"></i>Ajouter
             </a>
-            <div class="card-body">
-                <form method="get" th:action="@{/admin/user/list}">
-                    <div class="mb-3 d-flex">
-                        <input type="text" name="keyword" th:value="${keyword}" class="form-control me-2" placeholder="Rechercher par nom ou prénom">
-                        <button type="submit" class="btn btn-info">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </form>
+        </div>
 
-                <table class="table table-striped">
-                    <thead>
+        <!-- Message de succès avec le mot de passe généré -->
+        <div th:if="${generatedPassword}" class="alert alert-success m-3 alert-password">
+            <h5 class="alert-heading"><i class="bi bi-check-circle me-2"></i>Nouvel utilisateur créé avec succès!</h5>
+            <hr>
+            <p><strong>Login:</strong> <span th:text="${newUser.login}" class="user-value"></span></p>
+            <p><strong>Mot de passe:</strong> <code th:text="${generatedPassword}" class="px-2 py-1 bg-light"></code></p>
+            <p class="text-danger mb-0"><i class="bi bi-exclamation-triangle me-1"></i>Veuillez noter ce mot de passe, il ne sera plus affiché ultérieurement.</p>
+        </div>
+
+        <div class="card-body">
+            <!-- Barre de recherche -->
+            <form method="get" th:action="@{/admin/user/list}" class="mb-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-success text-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                           placeholder="Rechercher par nom ou prénom">
+                    <button type="submit" class="btn btn-success">
+                        Rechercher
+                    </button>
+                </div>
+            </form>
+
+            <!-- Tableau des annotateurs -->
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-success">
                     <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>Login</th>
-                        <th>Actions</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Login</th>
+                        <th scope="col" class="text-center">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="p: ${listeAnnotateur}">
-                        <td th:text="${p.id}"></td>
-                        <td th:text="${p.nom}"></td>
+                        <td><span class="id-badge" th:text="${p.id}"></span></td>
+                        <td th:text="${p.nom}" class="fw-semibold"></td>
                         <td th:text="${p.prenom}"></td>
-                        <td th:text="${p.login}"></td>
+                        <td><code th:text="${p.login}" class="text-primary"></code></td>
                         <td>
-                            <div class="d-flex gap-2">
-                                <a onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet annotateur?')" class="btn btn-sm btn-danger"
+                            <div class="d-flex justify-content-center gap-2 action-buttons">
+                                <a class="btn btn-sm btn-success" title="Modifier"
+                                   th:href="@{/admin/user/edit(id=${p.id}, keyword=${keyword}, page=${currentPage})}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet annotateur?')"
+                                   class="btn btn-sm btn-danger" title="Supprimer"
                                    th:href="@{/admin/user/delete(id=${p.id}, keyword=${keyword}, page=${currentPage})}">
                                     <i class="bi bi-trash"></i>
-                                </a>
-                                <a class="btn btn-sm btn-success"
-                                   th:href="@{/admin/user/edit(id=${p.id}, keyword=${keyword}, page=${currentPage})}">
-                                    <i class="bi bi-pencil"></i>
                                 </a>
                             </div>
                         </td>
                     </tr>
+                    <tr th:if="${#lists.isEmpty(listeAnnotateur)}">
+                        <td colspan="5" class="text-center py-4 text-muted">
+                            <i class="bi bi-info-circle me-2"></i>Aucun annotateur trouvé
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
-
-                <!-- Pagination -->
-                <nav aria-label="Page navigation" th:if="${pages.length > 1}">
-                    <ul class="pagination justify-content-center">
-                        <li th:each="pageIndex,status : ${pages}" th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
-                            <a class="page-link" th:href="@{/admin/user/list(page=${status.index},keyword=${keyword})}"
-                               th:text="${1+status.index}"></a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Navigation des pages" th:if="${pages != null && pages.length > 1}" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li th:each="pageIndex,status : ${pages}"
+                        th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
+                        <a class="page-link" th:classappend="${status.index == currentPage ? 'bg-success border-success' : ''}"
+                           th:href="@{/admin/user/list(page=${status.index},keyword=${keyword})}"
+                           th:text="${1+status.index}"></a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
+
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

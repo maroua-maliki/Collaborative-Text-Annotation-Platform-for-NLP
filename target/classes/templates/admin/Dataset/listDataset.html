@@ -3,52 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Tâches</title>
+    <title>Liste des Datasets</title>
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+        }
+        .card-header {
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .btn-add {
+            position: absolute;
+            right: 1.5rem;
+            top: 0.75rem;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        .action-buttons .btn {
+            transition: transform 0.2s;
+        }
+        .action-buttons .btn:hover {
+            transform: scale(1.1);
+        }
+        .id-badge {
+            background-color: #e9ecef;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+    </style>
 </head>
-<body>
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-list-task"></i> Liste des Tâches</h2>
-        <a th:href="@{/admin/dataset/add}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Nouvelle Tâche
-        </a>
-    </div>
-
-    <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
-    <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
-
+<body class="bg-light">
+<div class="container py-4">
     <div class="card">
+        <div class="card-header position-relative bg-success bg-gradient text-white">
+            <i class="bi bi-database-fill me-2"></i>Liste des Datasets
+            <a href="/admin/dataset/ajouter" class="btn btn-sm btn-light btn-add">
+                <i class="bi bi-plus-square-fill me-1"></i>Nouveau Dataset
+            </a>
+        </div>
         <div class="card-body">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Annotateur</th>
-                    <th>Date Limite</th>
-                    <th>Nom Dataset</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="tache : ">
-                    <td th:text=""></td>
-                    <td th:text=""></td>
-                    <td th:text="></td>
-                    <td th:text=""></td>
-                    <td>
-                        <a th:href="@{/admin/dataset/edit/{id}(id=${datatset.id})}" class="btn btn-sm btn-warning">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <a th:href="@{/admin/dataset/delete/{id}(id=${dataset.id})}" class="btn btn-sm btn-danger"
-                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche?')">
-                            <i class="bi bi-trash"></i>
-                        </a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-success">
+                    <tr>
+                        <th>Nom du Dataset</th>
+                        <th>Avancement</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="dataset : ${datasets}">
+                        <td th:text="${dataset.nomDataset}" class="fw-semibold"></td>
+                        <td>
+                            <div class="progress">
+                                <!-- Contenu de la barre de progression -->
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-2 action-buttons">
+                                <a th:href="@{/admin/dataset/details/{id}(id=${dataset.id})}" class="btn btn-sm btn-success" title="Détails">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-sm btn-primary" title="Ajouter annotateur">
+                                    <i class="bi bi-person-plus"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(datasets)}">
+                        <td colspan="3" class="text-center py-4 text-muted">
+                            <i class="bi bi-info-circle me-2"></i>Aucun dataset trouvé
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

@@ -5,10 +5,13 @@ import net.ensah.projetplateform.entities.Annotateur;
 import net.ensah.projetplateform.entities.ClassePossible;
 import net.ensah.projetplateform.entities.CoupleTexte;
 import net.ensah.projetplateform.entities.Dataset;
+import net.ensah.projetplateform.services.AffectationAnnotateurService;
 import net.ensah.projetplateform.services.AsyncDatasetService;
 import net.ensah.projetplateform.services.DatasetService;
 import net.ensah.projetplateform.services.AnnotateurService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +37,9 @@ public class DatasetController {
 
      @Autowired
      private AnnotateurService annotateurService;
+
+     @Autowired
+     private AffectationAnnotateurService affectationAnnotateurService;
 
     @GetMapping("/dataset/list")
     public String listDatasets(Model model) {
@@ -57,12 +64,10 @@ public class DatasetController {
 
         try {
 
-            // Assume this method creates the dataset, saves the file, and returns the saved Dataset entity
             Dataset savedDataset = datasetService.createDataset(dataset.getNomDataset(), dataset.getDescription(), file, classesPossibles);
 
             datasetService.saveDataset(savedDataset);
 
-            // Trigger async parsing
             asyncDatasetService.parseDatasetAsync(savedDataset);
 
             redirectAttributes.addFlashAttribute("success", "Dataset added successfully");
@@ -76,21 +81,72 @@ public class DatasetController {
     }
 
     @GetMapping("/dataset/{id}")
-    public String showDataset(@PathVariable("id") Long id, Model model) {
+    public String showDataset(@PathVariable("id") Long id,
+                              @RequestParam(name = "page", defaultValue = "0") int page,
+                              @RequestParam(name = "size", defaultValue = "10") int size,
+                              Model model) {
         Dataset dataset = datasetService.getDatasetById(id);
         if (dataset == null) {
             throw new RuntimeException("Dataset introuvable");
         }
-        List<CoupleTexte> coupleTexte = dataset.getCoupleTexte();
-        Integer taille = coupleTexte.size();
+
+        // Récupérer les couples de texte avec pagination
+        Page<CoupleTexte> coupleTextsPage = datasetService.getCoupleTextsByDatasetId(id, page, size);
+
+        // Calcul pour la fenêtre de pagination (afficher 5 pages maximum, centrées sur la page courante)
+        int totalPages = coupleTextsPage.getTotalPages();
+        int currentPage = page;
+
         List<ClassePossible> classePossibles = dataset.getClassePossible();
-        int tailleClasse = classePossibles.size();
+
+        // Ajouter les attributs au modèle
         model.addAttribute("dataset", dataset);
-        model.addAttribute("taille", taille);
-        model.addAttribute("tailleClasse", tailleClasse);
-        model.addAttribute("coupleTexte", coupleTexte);
+        model.addAttribute("taille", dataset.getCoupleTexte().size());
+        model.addAttribute("tailleClasse", classePossibles.size());
+        model.addAttribute("coupleTexte", coupleTextsPage.getContent()); // Utiliser le contenu de la page
         model.addAttribute("classePossibles", classePossibles);
+
+        // Ajouter les attributs de pagination
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalItems", coupleTextsPage.getTotalElements());
+        model.addAttribute("pageSize", size);
+
         return "admin/Dataset/detaillsDataset";
+    }
+
+    @GetMapping("/dataset/ajouter-annotateur/{id}")
+    public String ajouterAnnotateur(@PathVariable("id") Long id, Model model) {
+
+        Dataset dataset = datasetService.getDatasetById(id);
+
+        List<Annotateur> annotateurs = annotateurService.getActiveAnnotateurs();
+
+        model.addAttribute("annotateurs", annotateurs);
+        model.addAttribute("datasetId", id);
+        model.addAttribute("datasetName", dataset.getNomDataset());
+
+        return "admin/Dataset/listUser";
+    }
+
+    @PostMapping("/dataset/affecter-annotateurs")
+    public String affecterAnnotateurs(
+            @RequestParam("datasetId") Long datasetId,
+            @RequestParam(value = "selectedAnnotateurs", required = false) List<Long> annotateursIds,
+            @RequestParam("dateLimite") @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateLimite,
+            RedirectAttributes redirectAttributes) {
+
+        if (annotateursIds == null || annotateursIds.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Veuillez sélectionner au moins un annotateur.");
+            return "redirect:/admin/dataset/ajouter-annotateur/" + datasetId;
+        }
+
+        List<Annotateur> annotateurs = annotateurService.findAnnotateursByIds(annotateursIds);
+
+        affectationAnnotateurService.ajouterAnnotateur(datasetId, annotateurs, dateLimite);
+
+        redirectAttributes.addFlashAttribute("success", "Les annotateurs ont été affectés avec succès.");
+        return "redirect:/admin/dataset/" + datasetId;
     }
 
 

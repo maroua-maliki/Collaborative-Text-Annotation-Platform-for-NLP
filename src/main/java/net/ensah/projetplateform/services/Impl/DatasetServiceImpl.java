@@ -9,6 +9,10 @@ import net.ensah.projetplateform.repository.DatasetRepository;
 import net.ensah.projetplateform.services.DatasetService;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -228,4 +232,23 @@ public class DatasetServiceImpl implements DatasetService {
                 return "";
         }
     }
+
+    @Override
+    public Page<CoupleTexte> getCoupleTexts(int page, int size){
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        return coupleTextRepository.findAll(pageable);
+    }
+
+
+    @Override
+    public Page<CoupleTexte> getCoupleTextsByDatasetId(Long datasetId, int page, int size) {
+        Optional<Dataset> datasetOptional = datasetRepository.findById(datasetId);
+        if (datasetOptional.isPresent()) {
+            Dataset dataset = datasetOptional.get();
+            Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+            return coupleTextRepository.findByDatasetId(datasetId, pageable);
+        }
+        return Page.empty();
+    }
+
 }

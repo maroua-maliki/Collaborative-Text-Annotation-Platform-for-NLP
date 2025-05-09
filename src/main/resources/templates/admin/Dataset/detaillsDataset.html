@@ -12,9 +12,10 @@
             font-family: 'Arial', sans-serif;
         }
         .card {
-            border-radius: 5px;
+            border-radius: 8px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
         .card-header {
             background-color: #f8f9fa;
@@ -23,6 +24,7 @@
         }
         .info-label {
             font-weight: bold;
+            color: #495057;
         }
         .tab-content {
             padding-top: 15px;
@@ -31,21 +33,74 @@
             table-layout: fixed;
             width: 100%;
         }
-
         .table-fixed th, .table-fixed td {
             width: 50%;
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
-
         .badge {
             margin-right: 5px;
             margin-bottom: 5px;
+            padding: 6px 10px;
+            font-weight: 500;
         }
         .stats-number {
             font-size: 1.5rem;
             font-weight: bold;
             color: #0d6efd;
+        }
+        .annotateur-card {
+            transition: transform 0.2s;
+        }
+        .annotateur-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .classes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .dataset-header {
+            background-color: #f1f8ff;
+            border-left: 4px solid #0d6efd;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        .dataset-title {
+            color: #0d6efd;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .dataset-description {
+            color: #6c757d;
+            font-style: italic;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .info-item {
+            padding: 12px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+        .info-item-title {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        .info-item-content {
+            font-weight: 600;
+        }
+        .classes-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -60,18 +115,24 @@
     </nav>
 
     <!-- Informations générales du dataset -->
-    <div class="card">
-        <div class="card-header">
-            Informations Générales
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-database me-2"></i>Informations Générales
+            </div>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><span class="info-label">ID:</span> <span th:text="${dataset.id}"></span></p>
-                    <p><span class="info-label">Nom:</span> <span th:text="${dataset.nomDataset}"></span></p>
-                </div>
-                <div class="col-md-6">
-                    <p><span class="info-label">Description:</span> <span th:text="${dataset.description}"></span></p>
+            <!-- En-tête du dataset avec titre et description -->
+            <div class="dataset-header">
+                <h3 class="dataset-title" th:text="${dataset.nomDataset}"></h3>
+                <p class="dataset-description" th:text="${dataset.description}"></p>
+            </div>
+
+            <!-- Section des classes possibles -->
+            <div>
+                <div class="classes-label">Classes Possibles</div>
+                <div class="classes-container">
+                    <span th:each="classe : ${classePossibles}" class="badge bg-primary" th:text="${classe.nomClasse}"></span>
                 </div>
             </div>
         </div>
@@ -108,8 +169,8 @@
     <!-- Onglets pour naviguer entre les sections -->
     <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="classes-tab" data-bs-toggle="tab" data-bs-target="#classes" type="button" role="tab" aria-controls="classes" aria-selected="true">
-                Classes Possibles
+            <button class="nav-link active" id="annotateurs-tab" data-bs-toggle="tab" data-bs-target="#annotateurs" type="button" role="tab" aria-controls="annotateurs" aria-selected="true">
+                Annotateurs Affectés
             </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -121,31 +182,43 @@
 
     <!-- Contenu des onglets -->
     <div class="tab-content" id="myTabContent">
-        <!-- Onglet Classes Possibles -->
-        <div class="tab-pane fade show active" id="classes" role="tabpanel" aria-labelledby="classes-tab">
+        <!-- Onglet Annotateurs -->
+        <div class="tab-pane fade show active" id="annotateurs" role="tabpanel" aria-labelledby="annotateurs-tab">
             <div class="card">
-                <div class="card-header">
-                    Classes Possibles
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        Liste des Annotateurs
+                    </div>
+                    <div>
+                        <input type="text" class="form-control" id="searchAnnotateur" placeholder="Rechercher un annotateur...">
+                    </div>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex flex-wrap mb-3">
-                        <span th:each="classe : ${classePossibles}" class="badge bg-primary me-2 mb-2" th:text="${classe.nomClasse}"></span>
+                    <div class="alert alert-info" th:if="${#lists.isEmpty(dataset.taches)}">
+                        Aucun annotateur n'est affecté à ce dataset.
                     </div>
 
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Label</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="classe, stat : ${classePossibles}">
-                            <th scope="row" th:text="${stat.index + 1}"></th>
-                            <td th:text="${classe.nomClasse}"></td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${not #lists.isEmpty(dataset.taches)}">
+                        <div class="col" th:each="tache : ${dataset.taches}">
+                            <div class="card h-100 annotateur-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-person-circle me-2"></i>
+                                        <span th:text="${tache.annotateur.nom + ' ' + tache.annotateur.prenom}"></span>
+                                    </h5>
+                                    <p class="card-text">
+                                        <span class="badge bg-primary">Annotateur</span>
+                                    </p>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                            Date limite: <span th:text="${#dates.format(tache.dateLimite, 'dd/MM/yyyy')}"></span>
+                                        </small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -185,7 +258,7 @@
                 </div>
 
                 <!-- Pagination -->
-                <nav aria-label="Navigation des pages" th:if="${pages != null && pages.length > 1}" class="mt-4">
+                <nav aria-label="Navigation des pages" th:if="${totalPages != null }" class="mt-4">
                     <ul class="pagination justify-content-center">
                         <li th:each="pageIndex,status : ${pages}"
                             th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
@@ -198,19 +271,16 @@
             </div>
         </div>
 
-    <!-- Boutons d'action -->
-    <div class="mt-4 d-flex gap-2">
-        <a th:href="@{/admin/dataset/list}" class="btn btn-secondary">
-            Retour à la liste
-        </a>
-        <a th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-primary">
-            Ajouter des annotateurs
-        </a>
-        <a th:href="@{/admin/dataset/export/{id}(id=${dataset.id})}" class="btn btn-success">
-            Exporter le dataset
-        </a>
+        <!-- Boutons d'action -->
+        <div class="mt-4 d-flex gap-2">
+            <a th:href="@{/admin/dataset/list}" class="btn btn-secondary">
+                Retour à la liste
+            </a>
+            <a th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-primary">
+                Ajouter des annotateurs
+            </a>
+        </div>
     </div>
-  </div>
 </div>
 
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
@@ -218,9 +288,24 @@
     // Script pour la recherche dans les couples de texte
     document.getElementById('searchInput').addEventListener('keyup', function() {
         const searchValue = this.value.toLowerCase();
-        const coupleCards = document.querySelectorAll('.col');
+        const coupleRows = document.querySelectorAll('#textes tbody tr');
 
-        coupleCards.forEach(card => {
+        coupleRows.forEach(row => {
+            const textContent = row.textContent.toLowerCase();
+            if (textContent.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Script pour la recherche des annotateurs
+    document.getElementById('searchAnnotateur').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const annotateurCards = document.querySelectorAll('#annotateurs .col');
+
+        annotateurCards.forEach(card => {
             const textContent = card.textContent.toLowerCase();
             if (textContent.includes(searchValue)) {
                 card.style.display = '';

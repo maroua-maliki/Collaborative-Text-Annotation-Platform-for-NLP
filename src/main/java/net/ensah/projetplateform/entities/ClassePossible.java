@@ -10,5 +10,6 @@ public class ClassePossible {
     private Long id;
     private String nomClasse;
     @ManyToOne
+    @JoinColumn(name="dataset_id")
     private Dataset dataset;
 }

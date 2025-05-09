@@ -8,7 +8,9 @@ import lombok.*;
 public class CoupleTexte {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(columnDefinition = "LONGTEXT")
     private String texte1;
+    @Column(columnDefinition = "LONGTEXT")
     private String texte2;
     @ManyToOne
     private Taches taches;

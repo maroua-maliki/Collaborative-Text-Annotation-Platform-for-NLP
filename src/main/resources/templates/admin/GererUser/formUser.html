@@ -62,7 +62,19 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="mb-4">
+                            <label for="email" class="form-label required">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-success text-white"><i class="bi bi-envelope"></i></span>
+                                <input id="email" type="email" name="email" class="form-control"
+                                       th:value="${annotateur.email}" required>
+                            </div>
+                            <div class="error-feedback text-danger" th:if="${#fields.hasErrors('annotateur.email')}"
+                                 th:errors="${annotateur.email}"></div>
+                            <small class="text-muted mt-1 d-block">
+                                <i class="bi bi-info-circle me-1"></i>Le mot de passe sera envoyé à cette adresse email.
+                            </small>
+                        </div>
                         <div class="mb-4">
                             <label for="login" class="form-label required">Login</label>
                             <div class="input-group">

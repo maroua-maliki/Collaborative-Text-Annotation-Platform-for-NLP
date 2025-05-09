@@ -38,6 +38,11 @@ public class DatasetServiceImpl implements DatasetService {
     }
 
     @Override
+    public Dataset getDatasetById(Long id) {
+        return datasetRepository.findById(id).orElse(null);
+    }
+
+    @Override
     @Transactional
     public void saveDataset(Dataset dataset) {
         datasetRepository.save(dataset);

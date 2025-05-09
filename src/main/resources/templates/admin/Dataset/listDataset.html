@@ -68,7 +68,7 @@
                         </td>
                         <td>
                             <div class="d-flex justify-content-center gap-2 action-buttons">
-                                <a th:href="@{/admin/dataset/details/{id}(id=${dataset.id})}" class="btn btn-sm btn-success" title="Détails">
+                                <a th:href="@{/admin/dataset/{id}(id=${dataset.id})}" class="btn btn-sm btn-success" title="Détails">
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 <a th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-sm btn-primary" title="Ajouter annotateur">

@@ -16,5 +16,6 @@ public interface AnnotateurRepository extends JpaRepository<Annotateur, Long> {
     Page<Annotateur> findActiveAnnotateursByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     Page<Annotateur> findByIsActiveTrue(Pageable pageable);
+
 }
 

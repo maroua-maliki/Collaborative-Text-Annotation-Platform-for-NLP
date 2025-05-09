@@ -18,7 +18,7 @@ public class Dataset {
     private List<ClassePossible> classePossible;
     @OneToMany(mappedBy = "dataset", fetch = FetchType.EAGER)
     private List<Taches> taches;
-    @OneToMany(mappedBy = "dataset", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "dataset",  cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<CoupleTexte> coupleTexte;
 
 }

@@ -12,6 +12,8 @@ public interface DatasetService {
 
     List<Dataset> getAllDatasets();
 
+    Dataset getDatasetById(Long id);
+
     void saveDataset(Dataset dataset);
 
     Dataset createDataset(String name, String description, MultipartFile file, String classesRaw);

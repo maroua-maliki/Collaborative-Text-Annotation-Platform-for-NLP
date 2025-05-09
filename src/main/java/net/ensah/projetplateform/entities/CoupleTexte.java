@@ -17,5 +17,6 @@ public class CoupleTexte {
     @OneToOne
     private Annotations annotations;
     @ManyToOne
+    @JoinColumn(name="dataset_id")
     private Dataset dataset;
 }

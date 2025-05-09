@@ -1,10 +1,234 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Dataset</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            font-weight: 600;
+        }
+        .info-label {
+            font-weight: bold;
+        }
+        .tab-content {
+            padding-top: 15px;
+        }
+        .table-fixed {
+            table-layout: fixed;
+            width: 100%;
+        }
+
+        .table-fixed th, .table-fixed td {
+            width: 50%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .badge {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        .stats-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+    </style>
 </head>
 <body>
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/admin/home}" class="text-decoration-none">Accueil</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/dataset/list}" class="text-decoration-none">Datasets</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${dataset.nomDataset}"></li>
+        </ol>
+    </nav>
 
+    <!-- Informations générales du dataset -->
+    <div class="card">
+        <div class="card-header">
+            Informations Générales
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><span class="info-label">ID:</span> <span th:text="${dataset.id}"></span></p>
+                    <p><span class="info-label">Nom:</span> <span th:text="${dataset.nomDataset}"></span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><span class="info-label">Description:</span> <span th:text="${dataset.description}"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques du dataset -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Classes</h5>
+                    <div class="stats-number" th:text="${tailleClasse}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Textes</h5>
+                    <div class="stats-number" th:text="${taille}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Tâches</h5>
+                    <div class="stats-number" th:text="${#lists.size(dataset.taches)}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onglets pour naviguer entre les sections -->
+    <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="classes-tab" data-bs-toggle="tab" data-bs-target="#classes" type="button" role="tab" aria-controls="classes" aria-selected="true">
+                Classes Possibles
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="textes-tab" data-bs-toggle="tab" data-bs-target="#textes" type="button" role="tab" aria-controls="textes" aria-selected="false">
+                Couples de Texte
+            </button>
+        </li>
+    </ul>
+
+    <!-- Contenu des onglets -->
+    <div class="tab-content" id="myTabContent">
+        <!-- Onglet Classes Possibles -->
+        <div class="tab-pane fade show active" id="classes" role="tabpanel" aria-labelledby="classes-tab">
+            <div class="card">
+                <div class="card-header">
+                    Classes Possibles
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap mb-3">
+                        <span th:each="classe : ${classePossibles}" class="badge bg-primary me-2 mb-2" th:text="${classe.nomClasse}"></span>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Label</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="classe, stat : ${classePossibles}">
+                            <th scope="row" th:text="${stat.index + 1}"></th>
+                            <td th:text="${classe.nomClasse}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Onglet Couples de Texte -->
+        <div class="tab-pane fade" id="textes" role="tabpanel" aria-labelledby="textes-tab">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        Couples de Texte
+                    </div>
+                    <div>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Rechercher un texte...">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info" th:if="${#lists.isEmpty(coupleTexte)}">
+                        Aucun couple de texte disponible pour ce dataset.
+                    </div>
+
+                    <div th:if="${not #lists.isEmpty(coupleTexte)}">
+                        <table class="table table-striped table-fixed">
+                            <thead>
+                            <tr>
+                                <th width="50%">Texte 1</th>
+                                <th width="50%">Texte 2</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="couple : ${coupleTexte}">
+                                <td th:text="${couple.texte1}"></td>
+                                <td th:text="${couple.texte2}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Navigation des pages" th:if="${pages != null && pages.length > 1}" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li th:each="pageIndex,status : ${pages}"
+                            th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
+                            <a class="page-link"
+                               th:href="@{/admin/user/list(page=${status.index})}"
+                               th:text="${1+status.index}"></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+    <!-- Boutons d'action -->
+    <div class="mt-4 d-flex gap-2">
+        <a th:href="@{/admin/dataset/list}" class="btn btn-secondary">
+            Retour à la liste
+        </a>
+        <a th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-primary">
+            Ajouter des annotateurs
+        </a>
+        <a th:href="@{/admin/dataset/export/{id}(id=${dataset.id})}" class="btn btn-success">
+            Exporter le dataset
+        </a>
+    </div>
+  </div>
+</div>
+
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Script pour la recherche dans les couples de texte
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const coupleCards = document.querySelectorAll('.col');
+
+        coupleCards.forEach(card => {
+            const textContent = card.textContent.toLowerCase();
+            if (textContent.includes(searchValue)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+</script>
 </body>
 </html>

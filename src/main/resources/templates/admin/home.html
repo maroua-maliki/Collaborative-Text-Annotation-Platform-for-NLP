@@ -1,11 +1,13 @@
+
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/template}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de bord</title>
 </head>
 <body>
+<div layout:fragment="content1">
     <div class="container mt-4">
         <h1>Bienvenue sur le tableau de bord</h1>
 
@@ -24,8 +26,8 @@
                 <i class="bi bi-people-fill"></i> Taches
             </a>
         </div>
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" class="btn btn-danger">Logout</button>
+        <form th:action="@{/logout}" method="post" class="mt-4">
+            <button type="submit" class="btn btn-danger">Déconnexion</button>
         </form>
     </div>
 </div>

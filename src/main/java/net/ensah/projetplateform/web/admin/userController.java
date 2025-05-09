@@ -1,12 +1,14 @@
 package net.ensah.projetplateform.web.admin;
 
 
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import net.ensah.projetplateform.entities.Annotateur;
 import net.ensah.projetplateform.entities.Role;
 import net.ensah.projetplateform.repository.AnnotateurRepository;
 import net.ensah.projetplateform.repository.RoleRepository;
+import net.ensah.projetplateform.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +35,10 @@ public class userController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EmailService emailService;
+
 
     @GetMapping("/user/list")
     public String list(Model model,
@@ -94,7 +100,7 @@ public class userController {
         if(annotateur.getId() == null) {
             clearPassword = generateRandomPassword();
             annotateur.setPassword(passwordEncoder.encode(clearPassword));
-            annotateur.setIsActive(true); // Définir isActive à true pour les nouveaux annotateurs
+            annotateur.setIsActive(true);
 
             Role userRole = roleRepository.findById(2L).orElseThrow(() ->
                     new RuntimeException("Le rôle USER_ROLE avec ID 2 n'a pas été trouvé"));
@@ -104,12 +110,19 @@ public class userController {
         annotateurRepository.save(annotateur);
 
         if(clearPassword != null) {
-            redirectAttributes.addFlashAttribute("generatedPassword", clearPassword);
-            redirectAttributes.addFlashAttribute("newUser", annotateur);
+            try {
+                emailService.sendPasswordEmail(annotateur.getEmail(), annotateur.getLogin(), clearPassword);
+                redirectAttributes.addFlashAttribute("successMessage",
+                        "L'utilisateur a été créé avec succès. Les identifiants ont été envoyés par email à " + annotateur.getEmail());
+            } catch (MessagingException e) {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "L'utilisateur a été créé mais l'envoi d'email a échoué. Mot de passe: " + clearPassword);
+            }
         }
 
         return "redirect:/admin/user/list?page="+page+"&keyword="+keyword;
     }
+
 
     @GetMapping("user/edit")
     public String edit(Model model, Long id, String keyword, int page){

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/template}">
 <head>
   <meta charset="UTF-8">
   <title>Affecter des annotateurs au dataset</title>
@@ -33,6 +35,7 @@
   </style>
 </head>
 <body class="bg-light">
+<div layout:fragment="content1">
 <div class="container py-4">
   <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
@@ -116,9 +119,20 @@
             <i class="bi bi-check-circle me-1"></i>Affecter les annotateurs sélectionnés
           </button>
         </div>
+        <!-- Messages -->
+        <div th:if="${successMessage}" class="alert alert-success m-3">
+          <h5 class="alert-heading"><i class="bi bi-check-circle me-2"></i>Succès!</h5>
+          <p th:text="${successMessage}"></p>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-warning m-3">
+          <h5 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>Attention!</h5>
+          <p th:text="${errorMessage}"></p>
+        </div>
       </form>
     </div>
   </div>
+</div>
 </div>
 
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>

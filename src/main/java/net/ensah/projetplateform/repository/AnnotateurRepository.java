@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface AnnotateurRepository extends JpaRepository<Annotateur, Long> {
+
     Page<Annotateur> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(String nom, String prenom, Pageable pageable);
 
     Page<Annotateur> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCaseAndIsActive(String nom, String prenom, Boolean isActive, Pageable pageable);

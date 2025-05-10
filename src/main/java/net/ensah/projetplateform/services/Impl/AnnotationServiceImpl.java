@@ -31,21 +31,18 @@ public class AnnotationServiceImpl implements AnnotationService {
     @Override
     @Transactional
     public Annotations saveAnnotation(Long coupleTexteId, Long classeId, String username) {
-        // Récupérer l'annotateur
+
         Annotateur annotateur = annotateurRepository.findByLogin(username);
         if (annotateur == null) {
             throw new RuntimeException("Annotateur non trouvé");
         }
 
-        // Récupérer le couple de texte
         CoupleTexte coupleTexte = coupleTexteRepository.findById(coupleTexteId)
                 .orElseThrow(() -> new RuntimeException("Couple de texte non trouvé"));
 
-        // Récupérer la classe choisie
         ClassePossible classe = classePossibleRepository.findById(classeId)
                 .orElseThrow(() -> new RuntimeException("Classe non trouvée"));
 
-        // Créer ou mettre à jour l'annotation
         Annotations annotation = coupleTexte.getAnnotations();
         if (annotation == null) {
             annotation = new Annotations();
@@ -55,10 +52,8 @@ public class AnnotationServiceImpl implements AnnotationService {
         annotation.setClasseChoisie(classe.getNomClasse());
         annotation.setAnnotateur(annotateur);
 
-        // Sauvegarder l'annotation
         annotation = annotationsRepository.save(annotation);
 
-        // Mettre à jour le couple de texte
         coupleTexte.setAnnotations(annotation);
         coupleTexteRepository.save(coupleTexte);
 

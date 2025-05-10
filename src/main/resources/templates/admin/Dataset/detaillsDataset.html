@@ -169,62 +169,21 @@
     <!-- Onglets pour naviguer entre les sections -->
     <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="annotateurs-tab" data-bs-toggle="tab" data-bs-target="#annotateurs" type="button" role="tab" aria-controls="annotateurs" aria-selected="true">
-                Annotateurs Affectés
+            <button class="nav-link active" id="textes-tab" data-bs-toggle="tab" data-bs-target="#textes" type="button" role="tab" aria-controls="textes" aria-selected="true">
+                Couples de Texte
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="textes-tab" data-bs-toggle="tab" data-bs-target="#textes" type="button" role="tab" aria-controls="textes" aria-selected="false">
-                Couples de Texte
+            <button class="nav-link" id="annotateurs-tab" data-bs-toggle="tab" data-bs-target="#annotateurs" type="button" role="tab" aria-controls="annotateurs" aria-selected="false">
+                Annotateurs Affectés
             </button>
         </li>
     </ul>
 
     <!-- Contenu des onglets -->
     <div class="tab-content" id="myTabContent">
-        <!-- Onglet Annotateurs -->
-        <div class="tab-pane fade show active" id="annotateurs" role="tabpanel" aria-labelledby="annotateurs-tab">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div>
-                        Liste des Annotateurs
-                    </div>
-                    <div>
-                        <input type="text" class="form-control" id="searchAnnotateur" placeholder="Rechercher un annotateur...">
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-info" th:if="${#lists.isEmpty(dataset.taches)}">
-                        Aucun annotateur n'est affecté à ce dataset.
-                    </div>
-
-                    <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${not #lists.isEmpty(dataset.taches)}">
-                        <div class="col" th:each="tache : ${dataset.taches}">
-                            <div class="card h-100 annotateur-card">
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <i class="bi bi-person-circle me-2"></i>
-                                        <span th:text="${tache.annotateur.nom + ' ' + tache.annotateur.prenom}"></span>
-                                    </h5>
-                                    <p class="card-text">
-                                        <span class="badge bg-primary">Annotateur</span>
-                                    </p>
-                                    <p class="card-text">
-                                        <small class="text-muted">
-                                            <i class="bi bi-calendar-event me-1"></i>
-                                            Date limite: <span th:text="${#dates.format(tache.dateLimite, 'dd/MM/yyyy')}"></span>
-                                        </small>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Onglet Couples de Texte -->
-        <div class="tab-pane fade" id="textes" role="tabpanel" aria-labelledby="textes-tab">
+        <div class="tab-pane fade show active" id="textes" role="tabpanel" aria-labelledby="textes-tab">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
@@ -258,28 +217,124 @@
                 </div>
 
                 <!-- Pagination -->
-                <nav aria-label="Navigation des pages" th:if="${totalPages != null }" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <li th:each="pageIndex,status : ${pages}"
-                            th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
-                            <a class="page-link"
-                               th:href="@{/admin/user/list(page=${status.index})}"
-                               th:text="${1+status.index}"></a>
-                        </li>
-                    </ul>
-                </nav>
+                <div th:if="${totalPages > 1}" class="mt-4 ml-5">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="pagination-info">
+                            Affichage de <span class="fw-semibold" th:text="${#lists.size(coupleTexte)}"></span>
+                            sur <span class="fw-semibold" th:text="${totalItems}"></span> couples de texte
+                        </div>
+
+                        <nav aria-label="Navigation des pages">
+                            <ul class="pagination justify-content-center">
+                                <!-- Bouton précédent -->
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/dataset/{id}(id=${dataset.id},page=${currentPage - 1},size=${pageSize})}" aria-label="Précédent">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+                                </li>
+
+                                <!-- Logique de pagination avancée -->
+                                <th:block th:with="startPage=${currentPage < 2 ? 0 : (currentPage > totalPages - 3 ? totalPages - 5 : currentPage - 2)},
+                                   endPage=${totalPages < 5 ? totalPages - 1 : (startPage + 4 < totalPages ? startPage + 4 : totalPages - 1)}">
+                                    <th:block th:with="finalStartPage=${startPage < 0 ? 0 : startPage},
+                                       finalEndPage=${endPage < totalPages ? endPage : totalPages - 1}">
+
+                                        <!-- Première page et ellipsis -->
+                                        <li th:if="${finalStartPage > 0}" class="page-item">
+                                            <a class="page-link" th:href="@{/admin/dataset/{id}(id=${dataset.id},page=0,size=${pageSize})}">1</a>
+                                        </li>
+                                        <li th:if="${finalStartPage > 1}" class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+
+                                        <!-- Liens des pages -->
+                                        <li th:each="i : ${#numbers.sequence(finalStartPage, finalEndPage)}"
+                                            th:class="${i == currentPage ? 'page-item active' : 'page-item'}">
+                                            <a class="page-link" th:href="@{/admin/dataset/{id}(id=${dataset.id},page=${i},size=${pageSize})}"
+                                               th:text="${i + 1}"></a>
+                                        </li>
+
+                                        <!-- Ellipsis et dernière page -->
+                                        <li th:if="${finalEndPage < totalPages - 2}" class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                        <li th:if="${finalEndPage < totalPages - 1}" class="page-item">
+                                            <a class="page-link" th:href="@{/admin/dataset/{id}(id=${dataset.id},page=${totalPages - 1},size=${pageSize})}"
+                                               th:text="${totalPages}"></a>
+                                        </li>
+                                    </th:block>
+                                </th:block>
+
+                                <!-- Bouton suivant -->
+                                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/dataset/{id}(id=${dataset.id},page=${currentPage + 1},size=${pageSize})}" aria-label="Suivant">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Boutons d'action -->
-        <div class="mt-4 d-flex gap-2">
-            <a th:href="@{/admin/dataset/list}" class="btn btn-secondary">
-                Retour à la liste
-            </a>
-            <a th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-primary">
-                Ajouter des annotateurs
-            </a>
+        <!-- Onglet Annotateurs -->
+        <div class="tab-pane fade" id="annotateurs" role="tabpanel" aria-labelledby="annotateurs-tab">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        Liste des Annotateurs
+                    </div>
+                    <div>
+                        <input type="text" class="form-control" id="searchAnnotateur" placeholder="Rechercher un annotateur...">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info" th:if="${#lists.isEmpty(dataset.taches)}">
+                        Aucun annotateur n'est affecté à ce dataset.
+                    </div>
+
+                    <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${not #lists.isEmpty(dataset.taches)}">
+                        <div class="col" th:each="tache : ${dataset.taches}">
+                            <div class="card h-100 annotateur-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-person-circle me-2"></i>
+                                        <span th:text="${tache.annotateur.nom + ' ' + tache.annotateur.prenom}"></span>
+                                    </h5>
+                                    <p class="card-text">
+                                        <span class="badge bg-primary">Annotateur</span>
+                                    </p>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            <i class="bi bi-calendar-event me-1"></i>
+                                            Date limite: <span th:text="${#dates.format(tache.dateLimite, 'dd/MM/yyyy')}"></span>
+                                        </small>
+                                    </p>
+                                    <div class="mt-3 text-end">
+                                        <a th:href="@{/admin/dataset/supprimer-annotateur(tacheId=${tache.id},datasetId=${dataset.id})}"
+                                           class="btn btn-sm btn-danger"
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet annotateur du dataset?')">
+                                            <i class="bi bi-trash"></i> Supprimer
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="mt-4 d-flex gap-2">
+        <a th:href="@{/admin/dataset/list}" class="btn btn-secondary">
+            Retour à la liste
+        </a>
+        <a th:if="${#lists.isEmpty(dataset.taches)}" th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-primary">
+            Ajouter des annotateurs
+        </a>
     </div>
 </div>
 

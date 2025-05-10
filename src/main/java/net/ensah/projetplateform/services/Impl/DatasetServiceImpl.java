@@ -61,32 +61,26 @@ public class DatasetServiceImpl implements DatasetService {
         dataset.setDescription(description);
 
         if (file != null && !file.isEmpty()) {
-            // Create upload directory if it doesn't exist
             File uploadDirFile = new File(UPLOAD_DIR);
             if (!uploadDirFile.exists()) {
                 uploadDirFile.mkdirs();
             }
 
-            // Generate a unique filename to avoid collisions
             String originalFilename = file.getOriginalFilename();
             String uniqueFilename = UUID.randomUUID() + "_" + originalFilename;
 
-            // Create the complete file path
             Path targetLocation = Paths.get(UPLOAD_DIR, uniqueFilename).toAbsolutePath();
 
-            // Actually save the file to disk
             try {
                 Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
-            // Store the absolute path in the dataset
             dataset.setCheminFichierExport(targetLocation.toString());
             dataset.setTypeFichier(file.getContentType());
         }
 
-        // Handle classes
         List<ClassePossible> classSet = Arrays.stream(classesRaw.split(","))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
@@ -101,7 +95,6 @@ public class DatasetServiceImpl implements DatasetService {
         System.out.println(classSet);
         dataset.setClassePossible(classSet);
 
-        // Save the dataset to get an ID assigned
         return datasetRepository.save(dataset);
     }
 
@@ -117,7 +110,6 @@ public class DatasetServiceImpl implements DatasetService {
         Path filePath = Paths.get(filename);
 
         if (!Files.exists(filePath)) {
-            // Try as a classpath resource
             try {
                 File resourceFile = new File(filename);
                 if (resourceFile.exists()) {
@@ -132,7 +124,6 @@ public class DatasetServiceImpl implements DatasetService {
 
         List<CoupleTexte> coupleTexts = new ArrayList<>();
 
-        // Déterminer le type de fichier par l'extension ou le type MIME
         String typeFichier = dataset.getTypeFichier();
         String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
 

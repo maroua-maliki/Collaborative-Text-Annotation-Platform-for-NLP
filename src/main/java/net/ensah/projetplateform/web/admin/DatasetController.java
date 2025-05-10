@@ -149,5 +149,21 @@ public class DatasetController {
         return "redirect:/admin/dataset/" + datasetId;
     }
 
+    @GetMapping("/dataset/supprimer-annotateur")
+    public String supprimerAnnotateur(
+            @RequestParam("tacheId") Long tacheId,
+            @RequestParam("datasetId") Long datasetId,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            affectationAnnotateurService.supprimerAnnotateur(tacheId, datasetId);
+            redirectAttributes.addFlashAttribute("success", "L'annotateur a été supprimé du dataset avec succès. Les textes non annotés ont été redistribués.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la suppression: " + e.getMessage());
+        }
+
+        return "redirect:/admin/dataset/" + datasetId;
+    }
+
 
 }

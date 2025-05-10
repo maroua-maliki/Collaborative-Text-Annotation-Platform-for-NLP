@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AffectationAnnotateurService {
@@ -55,6 +56,57 @@ public class AffectationAnnotateurService {
             }
         }
 
+        datasetRepository.save(dataset);
+    }
+    @Transactional
+    public void supprimerAnnotateur(Long tacheId, Long datasetId) {
+        // Récupérer la tâche et le dataset
+        Taches tache = tacheRepository.findById(tacheId)
+                .orElseThrow(() -> new RuntimeException("Tâche non trouvée"));
+        Dataset dataset = datasetRepository.findById(datasetId)
+                .orElseThrow(() -> new RuntimeException("Dataset non trouvé"));
+
+        // Récupérer tous les couples de texte de l'annotateur à supprimer
+        List<CoupleTexte> couplesNonAnnotes = tache.getCoupleTexte().stream()
+                .filter(couple -> couple.getAnnotations() == null)
+                .collect(Collectors.toList());
+
+        // Récupérer les couples déjà annotés (pour les conserver)
+        List<CoupleTexte> couplesAnnotes = tache.getCoupleTexte().stream()
+                .filter(couple -> couple.getAnnotations() != null)
+                .collect(Collectors.toList());
+
+        // Récupérer les autres annotateurs actifs du dataset
+        List<Taches> autresTaches = dataset.getTaches().stream()
+                .filter(t -> !t.getId().equals(tacheId))
+                .collect(Collectors.toList());
+
+        if (!autresTaches.isEmpty() && !couplesNonAnnotes.isEmpty()) {
+            // Redistribuer les couples non annotés aux autres annotateurs
+            Collections.shuffle(couplesNonAnnotes); // Mélanger pour distribution aléatoire
+
+            int nombreTaches = autresTaches.size();
+            int index = 0;
+
+            for (CoupleTexte couple : couplesNonAnnotes) {
+                // Affecter le couple à un autre annotateur
+                Taches autreTache = autresTaches.get(index % nombreTaches);
+                couple.setTaches(autreTache);
+
+                index++;
+            }
+        }
+
+        // Pour les couples déjà annotés, on les détache de la tâche mais on conserve leurs annotations
+        for (CoupleTexte couple : couplesAnnotes) {
+            // On conserve l'annotation mais on détache le couple de la tâche
+            couple.setTaches(null);
+        }
+
+        // Supprimer la tâche
+        tacheRepository.delete(tache);
+
+        // Sauvegarder les modifications
         datasetRepository.save(dataset);
     }
 }

@@ -8,6 +8,7 @@ import net.ensah.projetplateform.entities.Annotateur;
 import net.ensah.projetplateform.entities.Role;
 import net.ensah.projetplateform.repository.AnnotateurRepository;
 import net.ensah.projetplateform.repository.RoleRepository;
+import net.ensah.projetplateform.services.AnnotateurService;
 import net.ensah.projetplateform.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,9 @@ public class UserController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private AnnotateurService annotateurService;
+
 
     @GetMapping("/user/list")
     public String list(Model model,
@@ -65,11 +69,7 @@ public class UserController {
     @GetMapping("/user/delete")
     @Transactional
     public String delete(@RequestParam(name = "id") Long id, String keyword, int page) {
-        Annotateur annotateur = annotateurRepository.findById(id).orElse(null);
-        if (annotateur != null) {
-            annotateur.setIsActive(false);
-            annotateurRepository.saveAndFlush(annotateur);
-        }
+        annotateurService.desactiverAnnotateur(id);
         return "redirect:/admin/user/list?page="+page+"&keyword="+keyword;
     }
 

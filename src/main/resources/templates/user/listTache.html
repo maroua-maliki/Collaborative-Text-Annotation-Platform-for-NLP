@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Taches</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+        }
+        .card-header {
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .btn-add {
+            position: absolute;
+            right: 1.5rem;
+            top: 0.75rem;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        .action-buttons .btn {
+            transition: transform 0.2s;
+        }
+        .action-buttons .btn:hover {
+            transform: scale(1.1);
+        }
+        .alert-password {
+            border-left: 4px solid #28a745;
+        }
+        .id-badge {
+            background-color: #e9ecef;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header position-relative bg-success bg-gradient text-white">
+                <i class="bi bi-people-fill me-2"></i>Liste des Taches
+            </div>
+
+            <div class="card-body">
+                <!-- Barre de recherche -->
+                <form method="get" th:action="@{/user/tache/list}" class="mb-4">
+                    <div class="input-group">
+                    <span class="input-group-text bg-success text-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+                        <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                               placeholder="Rechercher par nom dataset">
+                        <button type="submit" class="btn btn-success">
+                            Rechercher
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Tableau des annotateurs -->
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-success">
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nom Dataset</th>
+                            <th scope="col">Date Limite</th>
+                            <th scope="col">Taille</th>
+                            <th scope="col" class="text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="tache: ${listeTaches}">
+                            <td><span class="id-badge" th:text="${tache.id}"></span></td>
+                            <td th:text="${tache.dataset.nomDataset}" class="fw-semibold"></td>
+                            <td th:text="${tache.dateLimite}"></td>
+                            <td><code th:text="${#lists.size(tache.coupleTexte)}" class="text-primary"></code></td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a class="btn btn-sm btn-success" title="Annoter"
+                                       th:href="@{/user/tache/textes(tacheId=${tache.id}, textIndex=0)}">
+                                        <i class="bi bi-pencil-square"></i> Annoter
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listeTaches)}">
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <i class="bi bi-info-circle me-2"></i>Aucun annotateur trouvé
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Navigation des pages" th:if="${pages != null && pages.length > 1}" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <li th:each="pageIndex,status : ${pages}"
+                            th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
+                            <a class="page-link" th:classappend="${status.index == currentPage ? 'bg-success border-success' : ''}"
+                               th:href="@{/user/tache/list(page=${status.index},keyword=${keyword})}"
+                               th:text="${1+status.index}"></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

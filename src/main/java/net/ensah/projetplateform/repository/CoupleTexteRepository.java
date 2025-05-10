@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface CoupleTexteRepository extends JpaRepository<CoupleTexte, Long> {
     Page<CoupleTexte> findByDatasetId(Long datasetId, Pageable pageable);
+    List<CoupleTexte> findByTachesId(Long tacheId);
 }

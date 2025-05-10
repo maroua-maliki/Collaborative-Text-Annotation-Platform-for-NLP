@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
-public class userController {
+public class UserController {
 
     @Autowired
     private AnnotateurRepository annotateurRepository;

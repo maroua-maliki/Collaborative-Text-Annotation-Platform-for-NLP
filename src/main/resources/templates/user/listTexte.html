@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/template}">
+<head>
+    <meta charset="UTF-8">
+    <title>Annotation de textes</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+        }
+        .text-container {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .classes-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .class-item {
+            padding: 0.5rem 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .class-item:hover {
+            background-color: #e9ecef;
+        }
+        .class-item.selected {
+            background-color: #198754;
+            color: white;
+            border-color: #198754;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Annotation de textes</h5>
+                    <span class="badge bg-light text-dark" th:text="${textIndex + 1 + ' / ' + totalTextes}"></span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div th:if="${errorMessage}" class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+
+                <div th:if="${successMessage}" class="alert alert-success">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <span th:text="${successMessage}"></span>
+                </div>
+
+                <div th:if="${coupleTexte != null}">
+                    <h5 class="mb-3">Texte 1:</h5>
+                    <div class="text-container">
+                        <p th:text="${coupleTexte.texte1}"></p>
+                    </div>
+
+                    <h5 class="mb-3">Texte 2:</h5>
+                    <div class="text-container">
+                        <p th:text="${coupleTexte.texte2}"></p>
+                    </div>
+
+                    <h5 class="mb-3">Sélectionnez une classe:</h5>
+                    <form th:action="@{/user/tache/saveAnnotation}" method="post">
+                        <input type="hidden" name="coupleTexteId" th:value="${coupleTexte.id}">
+                        <input type="hidden" name="tacheId" th:value="${tacheId}">
+                        <input type="hidden" name="textIndex" th:value="${textIndex}">
+
+                        <div class="classes-container">
+                            <div th:each="classe : ${classesPossibles}" class="form-check class-item">
+                                <input class="form-check-input" type="radio" name="classeId"
+                                       th:id="${'classe-' + classe.id}" th:value="${classe.id}" required>
+                                <label class="form-check-label" th:for="${'classe-' + classe.id}"
+                                       th:text="${classe.nomClasse}"></label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/user/tache/list}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+                            </a>
+
+                            <div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Enregistrer
+                                </button>
+
+                                <a th:if="${hasNext}"
+                                   th:href="@{/user/tache/textes(tacheId=${tacheId}, textIndex=${textIndex + 1})}"
+                                   class="btn btn-primary ms-2">
+                                    Suivant<i class="bi bi-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // Script pour sélectionner visuellement les classes
+    document.querySelectorAll('.class-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+
+            document.querySelectorAll('.class-item').forEach(el => {
+                el.classList.remove('selected');
+            });
+            this.classList.add('selected');
+        });
+    });
+</script>
+</body>
+</html>

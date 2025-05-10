@@ -65,7 +65,7 @@
                     </div>
                 </form>
 
-                <!-- Tableau des annotateurs -->
+                <!-- Tableau des tâches -->
                 <div class="table-responsive">
                     <table class="table table-hover table-striped">
                         <thead class="table-success">
@@ -74,27 +74,36 @@
                             <th scope="col">Nom Dataset</th>
                             <th scope="col">Date Limite</th>
                             <th scope="col">Taille</th>
+                            <th scope="col">Avancement</th>
                             <th scope="col" class="text-center">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="tache: ${listeTaches}">
-                            <td><span class="id-badge" th:text="${tache.id}"></span></td>
-                            <td th:text="${tache.dataset.nomDataset}" class="fw-semibold"></td>
-                            <td th:text="${tache.dateLimite}"></td>
-                            <td><code th:text="${#lists.size(tache.coupleTexte)}" class="text-primary"></code></td>
+                        <tr th:each="tacheInfo: ${listeTaches}">
+                            <td><span class="id-badge" th:text="${tacheInfo.tache.id}"></span></td>
+                            <td th:text="${tacheInfo.tache.dataset.nomDataset}" class="fw-semibold"></td>
+                            <td th:text="${tacheInfo.tache.dateLimite}"></td>
+                            <td><code th:text="${tacheInfo.totalTextes}" class="text-primary"></code></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-success rounded-pill px-3 py-2 fs-6" th:text="${tacheInfo.pourcentage} + '%'"></span>
+                                </div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <small class="text-muted" th:text="${tacheInfo.textesAnnotes} + ' / ' + ${tacheInfo.totalTextes}"></small>
+                                </div>
+                            </td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
                                     <a class="btn btn-sm btn-success" title="Annoter"
-                                       th:href="@{/user/tache/textes(tacheId=${tache.id}, textIndex=0)}">
+                                       th:href="@{/user/tache/textes(tacheId=${tacheInfo.tache.id}, textIndex=0)}">
                                         <i class="bi bi-pencil-square"></i> Annoter
                                     </a>
                                 </div>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(listeTaches)}">
-                            <td colspan="5" class="text-center py-4 text-muted">
-                                <i class="bi bi-info-circle me-2"></i>Aucun annotateur trouvé
+                            <td colspan="6" class="text-center py-4 text-muted">
+                                <i class="bi bi-info-circle me-2"></i>Aucune tâche trouvée
                             </td>
                         </tr>
                         </tbody>

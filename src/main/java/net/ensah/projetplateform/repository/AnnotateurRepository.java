@@ -17,5 +17,7 @@ public interface AnnotateurRepository extends JpaRepository<Annotateur, Long> {
 
     Page<Annotateur> findByIsActiveTrue(Pageable pageable);
 
+    Annotateur findByLogin(String login);
+
 }
 

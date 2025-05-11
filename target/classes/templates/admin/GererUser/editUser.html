@@ -12,6 +12,7 @@
         .card {
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border-radius: 0.5rem;
+            margin: 50px 30px 30px 30px  ;
         }
         .form-control:focus {
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
@@ -90,6 +91,17 @@
                                  th:errors="${annotateur.login}"></div>
                         </div>
 
+                        <div class="mb-4">
+                            <label for="email" class="form-label required">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input id="email" type="email" name="email" class="form-control"
+                                       th:value="${annotateur.email}" required>
+                            </div>
+                            <div class="error-feedback text-danger" th:if="${#fields.hasErrors('annotateur.email')}"
+                                 th:errors="${annotateur.email}"></div>
+                        </div>
+
                         <div class="d-flex justify-content-between mt-4">
                             <a th:href="@{/admin/user/list(page=${page}, keyword=${keyword})}" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left me-1"></i>Retour
@@ -103,8 +115,9 @@
             </div>
         </div>
     </div>
+    
 </div>
-<div>
+</div>
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

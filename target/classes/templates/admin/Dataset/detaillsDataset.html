@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/template}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,15 +12,17 @@
         body {
             background-color: #f8f9fa;
             font-family: 'Arial', sans-serif;
+            margin: 50px 30px 30px 30px  ;
         }
         .card {
             border-radius: 8px;
-            margin-bottom: 15px;
             border: 1px solid #ddd;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            width: 100%;
         }
         .card-header {
-            background-color: #f8f9fa;
+            background-color: #198754;
+            color: white;
             border-bottom: 1px solid #ddd;
             font-weight: 600;
         }
@@ -64,13 +68,13 @@
         }
         .dataset-header {
             background-color: #f1f8ff;
-            border-left: 4px solid #0d6efd;
+            border-left: 4px solid #198754;
             padding: 15px;
             margin-bottom: 20px;
             border-radius: 0 5px 5px 0;
         }
         .dataset-title {
-            color: #0d6efd;
+            color: #198754;
             font-weight: 600;
             margin-bottom: 5px;
         }
@@ -102,17 +106,24 @@
             color: #6c757d;
             margin-bottom: 8px;
         }
+        /* Pour l'onglet des couples de texte */
+        #textes .card {
+            width: 100%;
+            margin: 0 auto;
+        }
+        /* Pour l'onglet des annotateurs */
+        #annotateurs .card-body {
+            width: 100%;
+        }
+        /* Assurez-vous que les conteneurs prennent toute la largeur */
+        .tab-pane {
+            width: 100%;
+        }
     </style>
 </head>
 <body>
+<div layout:fragment="content1">
 <div class="container py-4">
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/admin/home}" class="text-decoration-none">Accueil</a></li>
-            <li class="breadcrumb-item"><a th:href="@{/admin/dataset/list}" class="text-decoration-none">Datasets</a></li>
-            <li class="breadcrumb-item active" aria-current="page" th:text="${dataset.nomDataset}"></li>
-        </ol>
-    </nav>
 
     <!-- Informations générales du dataset -->
     <div class="card mb-4">
@@ -217,15 +228,10 @@
                 </div>
 
                 <!-- Pagination -->
-                <div th:if="${totalPages > 1}" class="mt-4 ml-5">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="pagination-info">
-                            Affichage de <span class="fw-semibold" th:text="${#lists.size(coupleTexte)}"></span>
-                            sur <span class="fw-semibold" th:text="${totalItems}"></span> couples de texte
-                        </div>
-
+                <div th:if="${totalPages > 1}" class="mt-4">
+                    <div class="d-flex justify-content-center">
                         <nav aria-label="Navigation des pages">
-                            <ul class="pagination justify-content-center">
+                            <ul class="pagination">
                                 <!-- Bouton précédent -->
                                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                                     <a class="page-link" th:href="@{/admin/dataset/{id}(id=${dataset.id},page=${currentPage - 1},size=${pageSize})}" aria-label="Précédent">
@@ -250,7 +256,8 @@
                                         <!-- Liens des pages -->
                                         <li th:each="i : ${#numbers.sequence(finalStartPage, finalEndPage)}"
                                             th:class="${i == currentPage ? 'page-item active' : 'page-item'}">
-                                            <a class="page-link" th:href="@{/admin/dataset/{id}(id=${dataset.id},page=${i},size=${pageSize})}"
+                                            <a class="page-link" th:classappend="${i == currentPage ? 'bg-success border-success' : ''}"
+                                               th:href="@{/admin/dataset/{id}(id=${dataset.id},page=${i},size=${pageSize})}"
                                                th:text="${i + 1}"></a>
                                         </li>
 
@@ -335,6 +342,7 @@
         <a th:if="${#lists.isEmpty(dataset.taches)}" th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-primary">
             Ajouter des annotateurs
         </a>
+    </div>
     </div>
 </div>
 

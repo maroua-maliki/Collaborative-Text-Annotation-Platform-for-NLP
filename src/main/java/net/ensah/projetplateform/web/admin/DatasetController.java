@@ -165,5 +165,16 @@ public class DatasetController {
         return "redirect:/admin/dataset/" + datasetId;
     }
 
+    @GetMapping("/dataset/delete/{id}")
+    public String deleteDataset(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            datasetService.deleteDataset(id);
+            redirectAttributes.addFlashAttribute("success", "Dataset supprimé avec succès");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la suppression du dataset: " + e.getMessage());
+        }
+        return "redirect:/admin/dataset/list";
+    }
+
 
 }

@@ -234,7 +234,7 @@
                 <a href="#">Forgot password?</a>
             </div>
         </div>
-        
+
         <!-- Message d'erreur -->
         <div th:if="${param.error}" class="alert alert-danger mb-3" role="alert">
             <span th:text="${session.error != null ? session.error : 'Invalid username or password'}"></span>

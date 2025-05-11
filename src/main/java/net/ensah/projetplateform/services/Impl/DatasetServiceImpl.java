@@ -3,9 +3,7 @@ package net.ensah.projetplateform.services.Impl;
 import net.ensah.projetplateform.entities.ClassePossible;
 import net.ensah.projetplateform.entities.CoupleTexte;
 import net.ensah.projetplateform.entities.Dataset;
-import net.ensah.projetplateform.repository.ClassePossibleRepository;
-import net.ensah.projetplateform.repository.CoupleTexteRepository;
-import net.ensah.projetplateform.repository.DatasetRepository;
+import net.ensah.projetplateform.repository.*;
 import net.ensah.projetplateform.services.DatasetService;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,12 @@ public class DatasetServiceImpl implements DatasetService {
 
     @Autowired
     private CoupleTexteRepository coupleTextRepository;
+
+    @Autowired
+    private TacheRepository tacheRepository;
+
+    @Autowired
+    private AnnotationsRepository annotationsRepository;
 
     @Override
     public List<Dataset> getAllDatasets() {
@@ -240,6 +244,53 @@ public class DatasetServiceImpl implements DatasetService {
             return coupleTextRepository.findByDatasetId(datasetId, pageable);
         }
         return Page.empty();
+    }
+
+    @Override
+    @Transactional
+    public void deleteDataset(Long id) {
+        Dataset dataset = datasetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Dataset not found with id: " + id));
+        
+        // Supprimer d'abord les annotations associées aux couples de texte
+        if (dataset.getCoupleTexte() != null) {
+            for (CoupleTexte couple : dataset.getCoupleTexte()) {
+                if (couple.getAnnotations() != null) {
+                    annotationsRepository.delete(couple.getAnnotations());
+                    couple.setAnnotations(null);
+                }
+            }
+        }
+        
+        // Supprimer les couples de texte associés
+        if (dataset.getCoupleTexte() != null) {
+            coupleTextRepository.deleteAll(dataset.getCoupleTexte());
+        }
+        
+        // Supprimer les classes possibles associées
+        if (dataset.getClassePossible() != null) {
+            classePossibleRepository.deleteAll(dataset.getClassePossible());
+        }
+        
+        // Supprimer les tâches associées si elles existent
+        if (dataset.getTaches() != null && !dataset.getTaches().isEmpty()) {
+            tacheRepository.deleteAll(dataset.getTaches());
+        }
+        
+        // Supprimer le fichier physique si existant
+        String filePath = dataset.getCheminFichierExport();
+        if (filePath != null && !filePath.isEmpty()) {
+            try {
+                Path path = Paths.get(filePath);
+                Files.deleteIfExists(path);
+            } catch (IOException e) {
+                // Log l'erreur mais continue la suppression
+                System.err.println("Erreur lors de la suppression du fichier: " + e.getMessage());
+            }
+        }
+        
+        // Maintenant supprimer le dataset
+        datasetRepository.delete(dataset);
     }
 
 }

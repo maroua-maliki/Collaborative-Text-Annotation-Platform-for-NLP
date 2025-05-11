@@ -12,6 +12,7 @@
         .card {
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border-radius: 0.5rem;
+            margin: 80px 30px 30px 30px  ;
         }
         .card-header {
             padding: 1rem;
@@ -74,8 +75,15 @@
                                 <a th:href="@{/admin/dataset/{id}(id=${dataset.id})}" class="btn btn-sm btn-success" title="Détails">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-sm btn-primary" title="Ajouter annotateur">
+                                <a th:if="${dataset.taches == null || dataset.taches.isEmpty()}" 
+                                   th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" 
+                                   class="btn btn-sm btn-primary" title="Ajouter annotateur">
                                     <i class="bi bi-person-plus"></i>
+                                </a>
+                                <a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce dataset?')"
+                                   th:href="@{/admin/dataset/delete/{id}(id=${dataset.id})}" 
+                                   class="btn btn-sm btn-danger" title="Supprimer">
+                                    <i class="bi bi-trash"></i>
                                 </a>
                             </div>
                         </td>

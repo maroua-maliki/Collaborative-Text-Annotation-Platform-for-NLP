@@ -97,7 +97,10 @@ public class UserController {
         if(bindingResult.hasErrors()) return "admin/GererUser/formUser";
 
         String clearPassword = null;
+        
+        // Vérifier s'il s'agit d'une création ou d'une modification
         if(annotateur.getId() == null) {
+            // Création d'un nouvel annotateur
             clearPassword = generateRandomPassword();
             annotateur.setPassword(passwordEncoder.encode(clearPassword));
             annotateur.setIsActive(true);
@@ -105,19 +108,46 @@ public class UserController {
             Role userRole = roleRepository.findById(2L).orElseThrow(() ->
                     new RuntimeException("Le rôle USER_ROLE avec ID 2 n'a pas été trouvé"));
             annotateur.setRole(userRole);
+        } else {
+            // Modification d'un annotateur existant
+            Annotateur existingAnnotateur = annotateurRepository.findById(annotateur.getId())
+                    .orElseThrow(() -> new RuntimeException("Annotateur introuvable"));
+            
+            // Préserver le mot de passe existant
+            annotateur.setPassword(existingAnnotateur.getPassword());
+            
+            // Préserver le statut actif
+            annotateur.setIsActive(existingAnnotateur.getIsActive());
+            
+            // Préserver le rôle existant
+            annotateur.setRole(existingAnnotateur.getRole());
         }
 
         annotateurRepository.save(annotateur);
 
+        // Reste du code pour l'envoi d'email (uniquement pour les nouveaux utilisateurs)
         if(clearPassword != null) {
             try {
-                emailService.sendPasswordEmail(annotateur.getEmail(), annotateur.getLogin(), clearPassword);
-                redirectAttributes.addFlashAttribute("successMessage",
-                        "L'utilisateur a été créé avec succès. Les identifiants ont été envoyés par email à " + annotateur.getEmail());
+                if(annotateur.getEmail() == null || annotateur.getEmail().isEmpty()) {
+                    redirectAttributes.addFlashAttribute("errorMessage",
+                            "L'utilisateur a été créé mais l'email est introuvable. Mot de passe: " + clearPassword);
+                    redirectAttributes.addFlashAttribute("generatedPassword", clearPassword);
+                    redirectAttributes.addFlashAttribute("newUser", annotateur);
+                } else {
+                    emailService.sendPasswordEmail(annotateur.getEmail(), annotateur.getLogin(), clearPassword);
+                    redirectAttributes.addFlashAttribute("successMessage",
+                            "L'utilisateur a été créé avec succès. Les identifiants ont été envoyés par email à " + annotateur.getEmail());
+                }
             } catch (MessagingException e) {
                 redirectAttributes.addFlashAttribute("errorMessage",
                         "L'utilisateur a été créé mais l'envoi d'email a échoué. Mot de passe: " + clearPassword);
+                redirectAttributes.addFlashAttribute("generatedPassword", clearPassword);
+                redirectAttributes.addFlashAttribute("newUser", annotateur);
             }
+        } else {
+            // Message pour la modification réussie
+            redirectAttributes.addFlashAttribute("successMessage", 
+                    "L'utilisateur a été modifié avec succès.");
         }
 
         return "redirect:/admin/user/list?page="+page+"&keyword="+keyword;

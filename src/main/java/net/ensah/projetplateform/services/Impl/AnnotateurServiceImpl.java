@@ -47,13 +47,11 @@ public class AnnotateurServiceImpl implements AnnotateurService {
         Annotateur annotateur = annotateurRepository.findById(annotateurId)
                 .orElseThrow(() -> new RuntimeException("Annotateur non trouvé"));
 
-        // Récupérer toutes les tâches de l'annotateur
         List<Taches> taches = annotateur.getTaches();
 
         for (Taches tache : taches) {
             Dataset dataset = tache.getDataset();
 
-            // Récupérer tous les couples de texte non annotés
             List<CoupleTexte> couplesNonAnnotes = tache.getCoupleTexte().stream()
                     .filter(couple -> couple.getAnnotations() == null)
                     .collect(Collectors.toList());
@@ -63,7 +61,6 @@ public class AnnotateurServiceImpl implements AnnotateurService {
                     .filter(couple -> couple.getAnnotations() != null)
                     .collect(Collectors.toList());
 
-            // Récupérer les autres annotateurs actifs du dataset
             List<Taches> autresTaches = dataset.getTaches().stream()
                     .filter(t -> !t.getId().equals(tache.getId()) && t.getAnnotateur().getIsActive())
                     .collect(Collectors.toList());

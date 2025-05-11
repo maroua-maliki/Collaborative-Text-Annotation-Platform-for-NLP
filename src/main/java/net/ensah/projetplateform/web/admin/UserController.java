@@ -112,20 +112,16 @@ public class UserController {
             // Modification d'un annotateur existant
             Annotateur existingAnnotateur = annotateurRepository.findById(annotateur.getId())
                     .orElseThrow(() -> new RuntimeException("Annotateur introuvable"));
-            
-            // Préserver le mot de passe existant
+
             annotateur.setPassword(existingAnnotateur.getPassword());
-            
-            // Préserver le statut actif
+
             annotateur.setIsActive(existingAnnotateur.getIsActive());
-            
-            // Préserver le rôle existant
+
             annotateur.setRole(existingAnnotateur.getRole());
         }
 
         annotateurRepository.save(annotateur);
 
-        // Reste du code pour l'envoi d'email (uniquement pour les nouveaux utilisateurs)
         if(clearPassword != null) {
             try {
                 if(annotateur.getEmail() == null || annotateur.getEmail().isEmpty()) {

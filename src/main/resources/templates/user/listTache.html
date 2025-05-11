@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" >
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{user/template}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +12,7 @@
         .card {
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border-radius: 0.5rem;
+            margin: 80px 30px 30px 30px  ;
         }
         .card-header {
             padding: 1rem;
@@ -43,6 +46,7 @@
     </style>
 </head>
 <body class="bg-light">
+<div layout:fragment="content1">
 
     <div class="container py-4">
         <div class="card">

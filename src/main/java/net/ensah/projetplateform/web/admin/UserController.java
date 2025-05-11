@@ -94,6 +94,11 @@ public class UserController {
                        @RequestParam(defaultValue = "") String keyword,
                        RedirectAttributes redirectAttributes) {
 
+        Annotateur existingAnnotateur = annotateurRepository.findByLogin(annotateur.getLogin());
+        if (existingAnnotateur != null && (annotateur.getId() == null || !existingAnnotateur.getId().equals(annotateur.getId()))) {
+            bindingResult.rejectValue("login", "error.annotateur", "Ce login est déjà utilisé");
+        }
+
         if(bindingResult.hasErrors()) return "admin/GererUser/formUser";
 
         String clearPassword = null;
@@ -110,7 +115,7 @@ public class UserController {
             annotateur.setRole(userRole);
         } else {
             // Modification d'un annotateur existant
-            Annotateur existingAnnotateur = annotateurRepository.findById(annotateur.getId())
+            existingAnnotateur = annotateurRepository.findById(annotateur.getId())
                     .orElseThrow(() -> new RuntimeException("Annotateur introuvable"));
 
             annotateur.setPassword(existingAnnotateur.getPassword());

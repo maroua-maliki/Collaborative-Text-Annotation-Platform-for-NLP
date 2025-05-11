@@ -63,32 +63,38 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="dataset : ${datasets}">
-                        <td th:text="${dataset.nomDataset}" class="fw-semibold"></td>
+                    <tr th:each="datasetInfo : ${datasetsInfo}">
+                        <td th:text="${datasetInfo.dataset.nomDataset}" class="fw-semibold"></td>
                         <td>
-                            <div class="progress">
-                                <!-- Contenu de la barre de progression -->
+                            <div class="progress" style="height: 20px;">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                     th:style="'width: ' + ${datasetInfo.pourcentage} + '%'"
+                                     th:text="${datasetInfo.pourcentage} + '%'">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted" th:text="${datasetInfo.textesAnnotes} + ' / ' + ${datasetInfo.totalTextes}"></small>
                             </div>
                         </td>
                         <td>
                             <div class="d-flex justify-content-center gap-2 action-buttons">
-                                <a th:href="@{/admin/dataset/{id}(id=${dataset.id})}" class="btn btn-sm btn-success" title="Détails">
+                                <a th:href="@{/admin/dataset/{id}(id=${datasetInfo.dataset.id})}" class="btn btn-sm btn-success" title="Détails">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                <a th:if="${dataset.taches == null || dataset.taches.isEmpty()}" 
-                                   th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" 
+                                <a th:if="${datasetInfo.dataset.taches == null || datasetInfo.dataset.taches.isEmpty()}"
+                                   th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${datasetInfo.dataset.id})}"
                                    class="btn btn-sm btn-primary" title="Ajouter annotateur">
                                     <i class="bi bi-person-plus"></i>
                                 </a>
                                 <a onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce dataset?')"
-                                   th:href="@{/admin/dataset/delete/{id}(id=${dataset.id})}" 
+                                   th:href="@{/admin/dataset/delete/{id}(id=${datasetInfo.dataset.id})}"
                                    class="btn btn-sm btn-danger" title="Supprimer">
                                     <i class="bi bi-trash"></i>
                                 </a>
                             </div>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(datasets)}">
+                    <tr th:if="${#lists.isEmpty(datasetsInfo)}">
                         <td colspan="3" class="text-center py-4 text-muted">
                             <i class="bi bi-info-circle me-2"></i>Aucun dataset trouvé
                         </td>

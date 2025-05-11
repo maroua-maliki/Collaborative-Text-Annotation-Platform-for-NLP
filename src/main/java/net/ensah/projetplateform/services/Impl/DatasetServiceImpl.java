@@ -293,4 +293,31 @@ public class DatasetServiceImpl implements DatasetService {
         datasetRepository.delete(dataset);
     }
 
+    @Override
+    public List<Map<String, Object>> getDatasetsWithProgress() {
+        List<Dataset> datasets = getAllDatasets();
+        List<Map<String, Object>> datasetsAvecAvancement = new ArrayList<>();
+
+        for (Dataset dataset : datasets) {
+            Map<String, Object> datasetInfo = new HashMap<>();
+            datasetInfo.put("dataset", dataset);
+
+            // Compter le nombre de textes annotés
+            long totalTextes = dataset.getCoupleTexte().size();
+            long textesAnnotes = dataset.getCoupleTexte().stream()
+                    .filter(ct -> ct.getAnnotations() != null)
+                    .count();
+
+            // Calculer le pourcentage
+            int pourcentage = totalTextes > 0 ? (int) ((textesAnnotes * 100) / totalTextes) : 0;
+            datasetInfo.put("pourcentage", pourcentage);
+            datasetInfo.put("textesAnnotes", textesAnnotes);
+            datasetInfo.put("totalTextes", totalTextes);
+
+            datasetsAvecAvancement.add(datasetInfo);
+        }
+
+        return datasetsAvecAvancement;
+    }
+
 }

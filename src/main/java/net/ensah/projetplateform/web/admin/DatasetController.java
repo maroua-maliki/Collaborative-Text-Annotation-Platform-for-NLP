@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -43,8 +41,8 @@ public class DatasetController {
 
     @GetMapping("/dataset/list")
     public String listDatasets(Model model) {
-        List<Dataset> datasets = datasetService.getAllDatasets();
-        model.addAttribute("datasets", datasets);
+        List<Map<String, Object>> datasetsAvecAvancement = datasetService.getDatasetsWithProgress();
+        model.addAttribute("datasetsInfo", datasetsAvecAvancement);
         return "admin/Dataset/listDataset";
     }
 

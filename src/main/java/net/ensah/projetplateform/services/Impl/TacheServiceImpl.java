@@ -10,7 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TacheServiceImpl implements TacheService {
@@ -45,5 +48,38 @@ public class TacheServiceImpl implements TacheService {
     @Override
     public List<CoupleTexte> getCoupleTextesByTacheId(Long tacheId) {
         return coupleTexteRepository.findByTachesId(tacheId);
+    }
+
+    @Override
+    public List<Map<String, Object>> getTachesAvecAvancement(String username, Pageable pageable) {
+        Page<Taches> pageTaches = findTachesByAnnotateur(username, pageable);
+        return calculerAvancementTaches(pageTaches.getContent());
+    }
+
+    @Override
+    public List<Map<String, Object>> getTachesAvecAvancementByKeyword(String username, String keyword, Pageable pageable) {
+        Page<Taches> pageTaches = findTachesByAnnotateurAndKeyword(username, keyword, pageable);
+        return calculerAvancementTaches(pageTaches.getContent());
+    }
+
+    private List<Map<String, Object>> calculerAvancementTaches(List<Taches> taches) {
+        List<Map<String, Object>> tachesAvecAvancement = new ArrayList<>();
+        for (Taches tache : taches) {
+            Map<String, Object> tacheInfo = new HashMap<>();
+            tacheInfo.put("tache", tache);
+
+            long totalTextes = tache.getCoupleTexte().size();
+            long textesAnnotes = tache.getCoupleTexte().stream()
+                    .filter(ct -> ct.getAnnotations() != null)
+                    .count();
+
+            int pourcentage = totalTextes > 0 ? (int) ((textesAnnotes * 100) / totalTextes) : 0;
+            tacheInfo.put("pourcentage", pourcentage);
+            tacheInfo.put("textesAnnotes", textesAnnotes);
+            tacheInfo.put("totalTextes", totalTextes);
+
+            tachesAvecAvancement.add(tacheInfo);
+        }
+        return tachesAvecAvancement;
     }
 }

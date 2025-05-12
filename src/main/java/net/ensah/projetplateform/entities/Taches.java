@@ -15,6 +15,7 @@ public class Taches {
     @Temporal( TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateLimite;
+    private boolean isFinished;
     @ManyToOne
     private Annotateur annotateur;
     @ManyToOne

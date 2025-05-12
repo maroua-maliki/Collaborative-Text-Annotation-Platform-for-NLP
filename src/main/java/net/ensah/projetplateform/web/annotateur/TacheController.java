@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,31 +38,14 @@ public class TacheController {
         String username = authentication.getName();
 
         Page<Taches> pageTaches;
+        List<Map<String, Object>> tachesAvecAvancement;
+
         if (keyword != null && !keyword.isEmpty()) {
             pageTaches = tacheService.findTachesByAnnotateurAndKeyword(username, keyword, PageRequest.of(page, size));
+            tachesAvecAvancement = tacheService.getTachesAvecAvancementByKeyword(username, keyword, PageRequest.of(page, size));
         } else {
             pageTaches = tacheService.findTachesByAnnotateur(username, PageRequest.of(page, size));
-        }
-
-        // Calculer le pourcentage d'avancement pour chaque tâche
-        List<Map<String, Object>> tachesAvecAvancement = new ArrayList<>();
-        for (Taches tache : pageTaches.getContent()) {
-            Map<String, Object> tacheInfo = new HashMap<>();
-            tacheInfo.put("tache", tache);
-
-            // Compter le nombre de textes annotés
-            long totalTextes = tache.getCoupleTexte().size();
-            long textesAnnotes = tache.getCoupleTexte().stream()
-                    .filter(ct -> ct.getAnnotations() != null)
-                    .count();
-
-            // Calculer le pourcentage
-            int pourcentage = totalTextes > 0 ? (int) ((textesAnnotes * 100) / totalTextes) : 0;
-            tacheInfo.put("pourcentage", pourcentage);
-            tacheInfo.put("textesAnnotes", textesAnnotes);
-            tacheInfo.put("totalTextes", totalTextes);
-
-            tachesAvecAvancement.add(tacheInfo);
+            tachesAvecAvancement = tacheService.getTachesAvecAvancement(username, PageRequest.of(page, size));
         }
 
         model.addAttribute("listeTaches", tachesAvecAvancement);

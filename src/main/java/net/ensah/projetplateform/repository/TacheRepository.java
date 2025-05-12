@@ -10,9 +10,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface TacheRepository extends JpaRepository<Taches, Long> {
 
-
+    @Query("SELECT t FROM Taches t WHERE t.annotateur.login = :login AND t.isFinished = false ")
     Page<Taches> findByAnnotateurLogin(String login, Pageable pageable);
 
-    @Query("SELECT t FROM Taches t WHERE t.annotateur.login = :login AND t.dataset.nomDataset LIKE %:keyword%")
+    @Query("SELECT t FROM Taches t WHERE t.annotateur.login = :login AND t.dataset.nomDataset LIKE %:keyword% AND t.isFinished = false ")
     Page<Taches> findByAnnotateurLoginAndKeyword(@Param("login") String login, @Param("keyword") String keyword, Pageable pageable);
 }

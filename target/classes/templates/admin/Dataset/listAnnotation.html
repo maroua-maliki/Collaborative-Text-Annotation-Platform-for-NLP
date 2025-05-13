@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/template}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Annotations</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+            margin: 80px 30px 30px 30px  ;
+        }
+        .text-container {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        .annotation-badge {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+        }
+        .pagination-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-list-check me-2"></i>Liste des Annotations - <span th:text="${dataset.nomDataset}"></span>
+                </div>
+                <div>
+                    <a th:href="@{/admin/dataset/annotations/{id}/export/csv(id=${dataset.id})}" class="btn btn-light btn-sm me-2">
+                        <i class="bi bi-filetype-csv me-1"></i>Exporter CSV
+                    </a>
+                    <a th:href="@{/admin/dataset/annotations/{id}/export/json(id=${dataset.id})}" class="btn btn-light btn-sm">
+                        <i class="bi bi-filetype-json me-1"></i>Exporter JSON
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info" th:if="${#lists.isEmpty(coupleTexte)}">
+                    Aucun couple de texte disponible pour ce dataset.
+                </div>
+
+                <div th:if="${not #lists.isEmpty(coupleTexte)}">
+                    <table class="table table-striped">
+                        <thead class="table-success">
+                        <tr>
+                            <th width="35%">Texte 1</th>
+                            <th width="35%">Texte 2</th>
+                            <th width="15%">Annotation</th>
+                            <th width="15%">Annotateur</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="couple : ${coupleTexte}">
+                            <td>
+                                <div class="text-container" th:text="${couple.texte1}"></div>
+                            </td>
+                            <td>
+                                <div class="text-container" th:text="${couple.texte2}"></div>
+                            </td>
+                            <td>
+                                <span th:if="${couple.annotations != null}"
+                                      class="badge bg-success annotation-badge"
+                                      th:text="${couple.annotations.classeChoisie}"></span>
+                                <span th:if="${couple.annotations == null}"
+                                      class="badge bg-secondary annotation-badge">Non annoté</span>
+                            </td>
+                            <td>
+                                <span th:if="${couple.annotations != null && couple.annotations.annotateur != null}"
+                                      th:text="${couple.annotations.annotateur.nom + ' ' + couple.annotations.annotateur.prenom}"></span>
+                                <span th:if="${couple.annotations == null && couple.taches != null && couple.taches.annotateur != null}"
+                                      th:text="${couple.taches.annotateur.nom + ' ' + couple.taches.annotateur.prenom}"></span>
+                                <span th:if="${(couple.annotations == null || couple.annotations.annotateur == null) && (couple.taches == null || couple.taches.annotateur == null)}"
+                                      class="text-muted">-</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Pagination -->
+                    <div class="pagination-container d-flex justify-content-center">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/dataset/annotations/{id}(id=${dataset.id}, page=0, size=${pageSize})}">Premier</a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/dataset/annotations/{id}(id=${dataset.id}, page=${currentPage - 1}, size=${pageSize})}">Précédent</a>
+                                </li>
+                                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                                    th:if="${i >= currentPage - 2 && i <= currentPage + 2}"
+                                    th:classappend="${i == currentPage} ? 'active'">
+                                    <a class="page-link" th:href="@{/admin/dataset/annotations/{id}(id=${dataset.id}, page=${i}, size=${pageSize})}" th:text="${i + 1}"></a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/dataset/annotations/{id}(id=${dataset.id}, page=${currentPage + 1}, size=${pageSize})}">Suivant</a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/admin/dataset/annotations/{id}(id=${dataset.id}, page=${totalPages - 1}, size=${pageSize})}">Dernier</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <a th:href="@{/admin/dataset/{id}(id=${dataset.id})}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-1"></i>Retour au dataset
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

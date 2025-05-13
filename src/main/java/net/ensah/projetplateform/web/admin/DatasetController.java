@@ -173,6 +173,32 @@ public class DatasetController {
         }
         return "redirect:/admin/dataset/list";
     }
+    @GetMapping("/dataset/annotations/{id}")
+    public String listAnnotations(@PathVariable("id") Long id,
+                                  @RequestParam(name = "page", defaultValue = "0") int page,
+                                  @RequestParam(name = "size", defaultValue = "10") int size,
+                                  Model model) {
+        Dataset dataset = datasetService.getDatasetById(id);
+        if (dataset == null) {
+            throw new RuntimeException("Dataset introuvable");
+        }
+
+        // Récupérer les couples de texte avec pagination
+        Page<CoupleTexte> coupleTextsPage = datasetService.getCoupleTextsByDatasetId(id, page, size);
+
+        // Ajouter les attributs au modèle
+        model.addAttribute("dataset", dataset);
+        model.addAttribute("coupleTexte", coupleTextsPage.getContent());
+
+        // Ajouter les attributs de pagination
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", coupleTextsPage.getTotalPages());
+        model.addAttribute("totalItems", coupleTextsPage.getTotalElements());
+        model.addAttribute("pageSize", size);
+
+        return "admin/Dataset/listAnnotation";
+    }
+
 
 
 }

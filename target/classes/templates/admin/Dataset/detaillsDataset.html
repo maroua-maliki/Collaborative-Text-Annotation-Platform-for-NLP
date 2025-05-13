@@ -333,7 +333,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Boutons d'action -->
     <div class="mt-4 d-flex gap-2">
         <a th:href="@{/admin/dataset/list}" class="btn btn-secondary">
@@ -341,6 +341,9 @@
         </a>
         <a th:if="${#lists.isEmpty(dataset.taches)}" th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-primary">
             Ajouter des annotateurs
+        </a>
+        <a th:href="@{/admin/dataset/annotations/{id}(id=${dataset.id})}" class="btn btn-success">
+            <i class="bi bi-list-check me-1"></i> Liste des annotations
         </a>
     </div>
     </div>

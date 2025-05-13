@@ -342,6 +342,9 @@
         <a th:if="${#lists.isEmpty(dataset.taches)}" th:href="@{/admin/dataset/ajouter-annotateur/{id}(id=${dataset.id})}" class="btn btn-primary">
             Ajouter des annotateurs
         </a>
+        <a th:href="@{/admin/dataset/annotations/{id}(id=${dataset.id})}" class="btn btn-success">
+            <i class="bi bi-list-check me-1"></i> Liste des annotations
+        </a>
     </div>
     </div>
 </div>

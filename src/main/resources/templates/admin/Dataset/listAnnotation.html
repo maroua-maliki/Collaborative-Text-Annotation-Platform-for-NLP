@@ -40,10 +40,10 @@
                     <i class="bi bi-list-check me-2"></i>Liste des Annotations - <span th:text="${dataset.nomDataset}"></span>
                 </div>
                 <div>
-                    <a th:href="@{/admin/dataset/annotations/{id}/export/csv(id=${dataset.id})}" class="btn btn-light btn-sm me-2">
+                    <a th:href="@{/admin/dataset/{id}/export/csv(id=${dataset.id})}" class="btn btn-light btn-sm me-2">
                         <i class="bi bi-filetype-csv me-1"></i>Exporter CSV
                     </a>
-                    <a th:href="@{/admin/dataset/annotations/{id}/export/json(id=${dataset.id})}" class="btn btn-light btn-sm">
+                    <a th:href="@{/admin/dataset/{id}/export/json(id=${dataset.id})}" class="btn btn-light btn-sm">
                         <i class="bi bi-filetype-json me-1"></i>Exporter JSON
                     </a>
                 </div>

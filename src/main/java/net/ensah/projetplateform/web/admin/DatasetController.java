@@ -21,6 +21,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/admin")
@@ -199,6 +206,65 @@ public class DatasetController {
         return "admin/Dataset/listAnnotation";
     }
 
+    @GetMapping("/dataset/{id}/export/csv")
+    public void exportToCsv(@PathVariable("id") Long id, HttpServletResponse response) throws IOException {
+        Dataset dataset = datasetService.getDatasetById(id);
+        if (dataset == null) {
+            throw new RuntimeException("Dataset introuvable");
+        }
+        
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + dataset.getNomDataset() + "_annotations.csv\"");
+        
+        try (PrintWriter writer = response.getWriter()) {
+            // Écrire l'en-tête
+            writer.println("Texte1,Texte2,Annotation,Annotateur");
+            
+            // Écrire les données
+            for (CoupleTexte couple : dataset.getCoupleTexte()) {
+                String texte1 = couple.getTexte1().replace(",", " ").replace("\"", "'");
+                String texte2 = couple.getTexte2().replace(",", " ").replace("\"", "'");
+                String annotation = (couple.getAnnotations() != null) ? couple.getAnnotations().getClasseChoisie() : "Non annoté";
+                String annotateur = (couple.getAnnotations() != null && couple.getAnnotations().getAnnotateur() != null) 
+                    ? couple.getAnnotations().getAnnotateur().getNom() + " " + couple.getAnnotations().getAnnotateur().getPrenom() 
+                    : "-";
+                
+                writer.println("\"" + texte1 + "\",\"" + texte2 + "\",\"" + annotation + "\",\"" + annotateur + "\"");
+            }
+        }
+    }
 
-
+    @GetMapping("/dataset/{id}/export/json")
+    public void exportToJson(@PathVariable("id") Long id, HttpServletResponse response) throws IOException {
+        Dataset dataset = datasetService.getDatasetById(id);
+        if (dataset == null) {
+            throw new RuntimeException("Dataset introuvable");
+        }
+        
+        response.setContentType("application/json");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + dataset.getNomDataset() + "_annotations.json\"");
+        
+        List<Map<String, Object>> jsonData = new ArrayList<>();
+        
+        for (CoupleTexte couple : dataset.getCoupleTexte()) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("texte1", couple.getTexte1());
+            item.put("texte2", couple.getTexte2());
+            item.put("annotation", (couple.getAnnotations() != null) ? couple.getAnnotations().getClasseChoisie() : null);
+            
+            if (couple.getAnnotations() != null && couple.getAnnotations().getAnnotateur() != null) {
+                Map<String, String> annotateur = new HashMap<>();
+                annotateur.put("nom", couple.getAnnotations().getAnnotateur().getNom());
+                annotateur.put("prenom", couple.getAnnotations().getAnnotateur().getPrenom());
+                item.put("annotateur", annotateur);
+            } else {
+                item.put("annotateur", null);
+            }
+            
+            jsonData.add(item);
+        }
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(response.getOutputStream(), jsonData);
+    }
 }

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Modifier une annotation</title>
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container py-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Modifier l'annotation</h5>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/admin/dataset/update-annotation}" method="post">
+                    <input type="hidden" name="coupleTexteId" th:value="${coupleTexte.id}" />
+                    <input type="hidden" name="datasetId" th:value="${datasetId}" />
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Texte 1:</label>
+                        <div class="p-3 border rounded bg-light" th:text="${coupleTexte.texte1}"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Texte 2:</label>
+                        <div class="p-3 border rounded bg-light" th:text="${coupleTexte.texte2}"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Annotation actuelle:</label>
+                        <div class="p-2 border rounded" th:if="${coupleTexte.annotations != null}">
+                            <span class="badge bg-success" th:text="${coupleTexte.annotations.classeChoisie}"></span>
+                            <small class="text-muted ms-2" th:if="${coupleTexte.annotations.annotateur != null}">
+                                par <span th:text="${coupleTexte.annotations.annotateur.nom + ' ' + coupleTexte.annotations.annotateur.prenom}"></span>
+                            </small>
+                        </div>
+                        <div class="p-2 border rounded text-muted" th:if="${coupleTexte.annotations == null}">
+                            Non annoté
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Nouvelle annotation:</label>
+                        <select name="classeId" class="form-select" required>
+                            <option value="">-- Sélectionner une classe --</option>
+                            <option th:each="classe : ${classesPossibles}" 
+                                    th:value="${classe.id}" 
+                                    th:text="${classe.nomClasse}"
+                                    th:selected="${coupleTexte.annotations != null && coupleTexte.annotations.classeChoisie == classe.nomClasse}">
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/admin/dataset/annotations/{id}(id=${datasetId})}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Annuler
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-1"></i>Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -419,20 +419,20 @@
             color: white;
             box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
         }
-        
+
         .btn-danger:hover {
             background: #dc2626;
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3);
         }
-        
+
         /* Annotator cards */
         .annotator-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
-        
+
         .annotator-card {
             background: white;
             border-radius: 12px;
@@ -442,12 +442,12 @@
             border: 1px solid #f1f1f1;
             height: 100%;
         }
-        
+
         .annotator-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
         }
-        
+
         .annotator-header {
             padding: 1.25rem;
             border-bottom: 1px solid #f7f7f7;
@@ -455,7 +455,7 @@
             align-items: center;
             gap: 1rem;
         }
-        
+
         .annotator-avatar {
             width: 50px;
             height: 50px;
@@ -467,14 +467,14 @@
             border-radius: 50%;
             font-size: 1.5rem;
         }
-        
+
         .annotator-name {
             font-weight: 600;
             color: #334155;
             font-size: 1.125rem;
             margin-bottom: 0.25rem;
         }
-        
+
         .annotator-role {
             display: inline-block;
             padding: 0.25rem 0.75rem;
@@ -484,11 +484,11 @@
             font-size: 0.75rem;
             font-weight: 500;
         }
-        
+
         .annotator-body {
             padding: 1.25rem;
         }
-        
+
         .annotator-meta {
             display: flex;
             align-items: center;
@@ -497,7 +497,7 @@
             font-size: 0.875rem;
             margin-bottom: 1rem;
         }
-        
+
         .annotator-actions {
             display: flex;
             justify-content: flex-end;
@@ -789,7 +789,7 @@
                     </div>
                 </div>
                 
-                <div class="alert alert-info" th:if="${#lists.isEmpty(coupleTextes)}">
+                <div class="alert alert-info" th:if="${#lists.isEmpty(coupleTexte)}">
                     <i class="bi bi-info-circle me-2"></i>
                     Aucun couple de texte n'est disponible pour ce dataset.
                 </div>
@@ -918,6 +918,7 @@
                             <div class="annotator-actions">
                                 <a th:href="@{/admin/dataset/supprimer-annotateur(tacheId=${tache.id},datasetId=${dataset.id})}"
                                    class="btn btn-danger btn-sm"
+                                   style="background-color: #ef4444; color: white; display: inline-flex; align-items: center; gap: 0.5rem;"
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet annotateur du dataset?')">
                                     <i class="bi bi-trash"></i>
                                     <span>Supprimer</span>

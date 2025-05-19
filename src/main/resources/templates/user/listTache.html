@@ -5,126 +5,557 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Taches</title>
-    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+    <title>Liste des Tâches</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        .card {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 0.5rem;
-            margin: 80px 30px 30px 30px  ;
+        :root {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --primary-light: rgba(46, 204, 113, 0.1);
+            --secondary: #1abc9c;
+            --accent: #3498db;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --text-dark: #2d3436;
+            --text-medium: #636e72;
+            --text-light: #b2bec3;
+            --bg-white: #ffffff;
+            --bg-light: #f8f9fa;
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --border-radius-sm: 0.25rem;
+            --border-radius-md: 0.5rem;
+            --border-radius-lg: 1rem;
+            --border-radius-xl: 1.5rem;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.1);
+            --shadow-lg: 0 16px 32px rgba(0,0,0,0.12);
+            --transition-fast: 0.2s;
+            --transition-normal: 0.3s;
         }
-        .card-header {
-            padding: 1rem;
-            font-weight: 600;
-            font-size: 1.2rem;
-            border-bottom: 2px solid #dee2e6;
+        
+        .task-page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        .btn-add {
+        
+        .task-dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-gap: 1.5rem;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .page-title i {
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-md);
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .task-card {
+            background: var(--bg-white);
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+            border: none;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .task-search-container {
+            margin-bottom: 2rem;
+        }
+        
+        .task-search-form {
+            position: relative;
+            display: flex;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .task-search-input {
+            flex: 1;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius-lg);
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+        }
+        
+        .task-search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+            outline: none;
+        }
+        
+        .task-search-btn {
             position: absolute;
-            right: 1.5rem;
-            top: 0.75rem;
+            right: 8px;
+            top: 8px;
+            bottom: 8px;
+            border-radius: var(--border-radius-md);
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 0 1.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            transition: all var(--transition-fast);
         }
-        .table th {
-            background-color: #f8f9fa;
+        
+        .task-search-btn:hover {
+            filter: brightness(1.1);
         }
-        .action-buttons .btn {
-            transition: transform 0.2s;
+        
+        .task-search-btn i {
+            margin-right: 0.5rem;
+            font-size: 0.9rem;
         }
-        .action-buttons .btn:hover {
-            transform: scale(1.1);
+        
+        .task-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
-        .alert-password {
-            border-left: 4px solid #28a745;
+        
+        .task-stat-card {
+            background-color: var(--bg-white);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            flex: 1;
+            border-top: 4px solid var(--primary);
+            min-width: 200px;
         }
+        
+        .task-stat-title {
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .task-stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        
         .id-badge {
-            background-color: #e9ecef;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
+            display: inline-block;
+            background: linear-gradient(45deg, var(--accent), #4a69bd);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--border-radius-md);
             font-family: monospace;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Task Grid Layout */
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .task-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .task-card {
+            border-radius: var(--border-radius-lg);
+            background-color: var(--bg-white);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-normal);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .task-card-header {
+            padding: 1.5rem 1.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .task-status {
+            text-align: right;
+        }
+        
+        .task-progress-label {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .task-progress-bar {
+            height: 6px;
+            width: 120px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .task-progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .task-card-body {
+            padding: 1.5rem;
+            flex: 1;
+        }
+        
+        .task-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+        
+        .task-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .task-meta-item {
+            display: flex;
+            align-items: center;
+            color: var(--text-medium);
+            font-size: 0.9rem;
+        }
+        
+        .task-meta-item i {
+            font-size: 1rem;
+            margin-right: 0.5rem;
+            color: var(--accent);
+        }
+        
+        .task-description {
+            color: var(--text-medium);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .task-card-footer {
+            padding: 1.25rem 1.5rem;
+            background-color: rgba(0,0,0,0.02);
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .task-action-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-md);
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        
+        .task-action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            filter: brightness(1.05);
+            color: white;
+        }
+        
+        .task-action-button i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Empty state styling */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background-color: var(--bg-white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            grid-column: 1 / -1;
+        }
+        
+        .empty-state-icon {
+            font-size: 3.5rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-state-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+        
+        .empty-state-message {
+            color: var(--text-medium);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        /* Modern Pagination */
+        .modern-pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            padding: 1rem 0;
+        }
+        
+        .modern-pagination {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--bg-white);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            padding: 1.25rem 2rem;
+        }
+        
+        .pagination-info {
+            color: var(--text-medium);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .pagination-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-light);
+            color: var(--text-medium);
+            transition: all var(--transition-fast);
+            text-decoration: none;
+        }
+        
+        .pagination-arrow:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .pagination-numbers {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .pagination-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-light);
+            color: var(--text-medium);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+        
+        .pagination-number:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .pagination-number.active {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .task-page-container {
+                padding: 1rem;
+            }
+            
+            .task-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .task-meta {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .page-title i {
+                width: 36px;
+                height: 36px;
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 <body class="bg-light">
 <div layout:fragment="content1">
-
-    <div class="container py-4">
-        <div class="card">
-            <div class="card-header position-relative bg-success bg-gradient text-white">
-                <i class="bi bi-people-fill me-2"></i>Liste des Taches
+    <div class="task-page-container">
+        <div class="task-dashboard">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-list-task"></i>
+                    Liste des Tâches
+                </h1>
+            </div>
+            <div class="task-search-container">
+                <form method="get" th:action="@{/user/tache/list}" class="task-search-form">
+                    <input type="text" name="keyword" th:value="${keyword}" class="task-search-input" placeholder="Rechercher par nom dataset...">
+                    <button type="submit" class="task-search-btn">
+                        <i class="bi bi-search"></i> Rechercher
+                    </button>
+                </form>
             </div>
 
-            <div class="card-body">
-                <!-- Barre de recherche -->
-                <form method="get" th:action="@{/user/tache/list}" class="mb-4">
-                    <div class="input-group">
-                    <span class="input-group-text bg-success text-white">
-                        <i class="bi bi-search"></i>
-                    </span>
-                        <input type="text" name="keyword" th:value="${keyword}" class="form-control"
-                               placeholder="Rechercher par nom dataset">
-                        <button type="submit" class="btn btn-success">
-                            Rechercher
-                        </button>
+                <!-- Task Grid -->
+                <div class="task-grid">
+                    <div th:each="tacheInfo: ${listeTaches}" class="task-item">
+                        <div class="task-card">
+                            <div class="task-card-header">
+                                <div class="task-id">
+                                    <span class="id-badge" th:text="${tacheInfo.tache.id}"></span>
+                                </div>
+                                <div class="task-status" th:with="percent=${tacheInfo.pourcentage}">
+                                    <div class="task-progress-label">
+                                        <span th:text="${percent} + '%'"></span>
+                                    </div>
+                                    <div class="task-progress-bar">
+                                        <div class="task-progress-fill" th:style="'width: ' + ${percent} + '%'">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="task-card-body">
+                                <h3 class="task-name" th:text="${tacheInfo.tache.dataset.nomDataset}"></h3>
+                                
+                                <div class="task-meta">
+                                    <div class="task-meta-item">
+                                        <i class="bi bi-calendar-event"></i>
+                                        <span th:text="${tacheInfo.tache.dateLimite}"></span>
+                                    </div>
+                                    <div class="task-meta-item">
+                                        <i class="bi bi-file-text"></i>
+                                        <span th:text="${tacheInfo.textesAnnotes} + ' / ' + ${tacheInfo.totalTextes} + ' textes'"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="task-description">
+                                    <p>Tâche d'annotation à compléter avant la date limite.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="task-card-footer">
+                                <a class="task-action-button" title="Annoter"
+                                   th:href="@{/user/tache/textes(tacheId=${tacheInfo.tache.id}, textIndex=0)}">
+                                    <i class="bi bi-pencil-square"></i> Commencer l'annotation
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </form>
-
-                <!-- Tableau des tâches -->
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped">
-                        <thead class="table-success">
-                        <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Nom Dataset</th>
-                            <th scope="col">Date Limite</th>
-                            <th scope="col">Taille</th>
-                            <th scope="col">Avancement</th>
-                            <th scope="col" class="text-center">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="tacheInfo: ${listeTaches}">
-                            <td><span class="id-badge" th:text="${tacheInfo.tache.id}"></span></td>
-                            <td th:text="${tacheInfo.tache.dataset.nomDataset}" class="fw-semibold"></td>
-                            <td th:text="${tacheInfo.tache.dateLimite}"></td>
-                            <td><code th:text="${tacheInfo.totalTextes}" class="text-primary"></code></td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <span class="badge bg-success rounded-pill px-3 py-2 fs-6" th:text="${tacheInfo.pourcentage} + '%'"></span>
-                                </div>
-                                <div class="d-flex justify-content-between mt-1">
-                                    <small class="text-muted" th:text="${tacheInfo.textesAnnotes} + ' / ' + ${tacheInfo.totalTextes}"></small>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex justify-content-center gap-2">
-                                    <a class="btn btn-sm btn-success" title="Annoter"
-                                       th:href="@{/user/tache/textes(tacheId=${tacheInfo.tache.id}, textIndex=0)}">
-                                        <i class="bi bi-pencil-square"></i> Annoter
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(listeTaches)}">
-                            <td colspan="6" class="text-center py-4 text-muted">
-                                <i class="bi bi-info-circle me-2"></i>Aucune tâche trouvée
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    
+                    <div th:if="${#lists.isEmpty(listeTaches)}" class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-clipboard-x"></i>
+                        </div>
+                        <h3 class="empty-state-title">Aucune tâche trouvée</h3>
+                        <p class="empty-state-message">Aucune tâche d'annotation ne vous a été assignée pour le moment.</p>
+                    </div>
                 </div>
 
-                <!-- Pagination -->
-                <nav aria-label="Navigation des pages" th:if="${pages != null && pages.length > 1}" class="mt-4">
-                    <ul class="pagination justify-content-center">
-                        <li th:each="pageIndex,status : ${pages}"
-                            th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
-                            <a class="page-link" th:classappend="${status.index == currentPage ? 'bg-success border-success' : ''}"
-                               th:href="@{/user/tache/list(page=${status.index},keyword=${keyword})}"
-                               th:text="${1+status.index}"></a>
-                        </li>
-                    </ul>
-                </nav>
+                <!-- Modern Pagination -->
+                <div class="modern-pagination-container" th:if="${pages != null && pages.length > 1}">
+                    <div class="modern-pagination">
+                        <div class="pagination-info">Page <span th:text="${currentPage + 1}"></span> sur <span th:text="${pages.length}"></span></div>
+                        <div class="pagination-controls">
+                            <a class="pagination-arrow" th:if="${currentPage > 0}" 
+                               th:href="@{/user/tache/list(page=${currentPage - 1},keyword=${keyword})}" title="Page précédente">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                            
+                            <div class="pagination-numbers">
+                                <a th:each="pageIndex,status : ${pages}" 
+                                   th:class="${status.index == currentPage ? 'pagination-number active' : 'pagination-number'}"
+                                   th:href="@{/user/tache/list(page=${status.index},keyword=${keyword})}"
+                                   th:text="${1+status.index}"></a>
+                            </div>
+                            
+                            <a class="pagination-arrow" th:if="${currentPage < pages.length - 1}"
+                               th:href="@{/user/tache/list(page=${currentPage + 1},keyword=${keyword})}" title="Page suivante">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

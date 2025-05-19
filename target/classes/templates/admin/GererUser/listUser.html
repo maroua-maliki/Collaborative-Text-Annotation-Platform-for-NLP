@@ -5,132 +5,490 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des Annotateurs</title>
-    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
     <style>
-        .card {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 0.5rem;
-            margin: 80px 30px 30px 30px  ;
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --success: #10b981;
+            --success-dark: #059669;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            --text-dark: #111827;
+            --text-medium: #4b5563;
+            --text-light: #9ca3af;
+            --bg-main: #f9fafb;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --bg-sidebar: #ffffff;
+            --bg-sidebar-hover: rgba(243, 244, 246, 0.7);
+            --bg-sidebar-active: rgba(237, 233, 254, 0.5);
+            --bg-input: #ffffff;
+            --glass-border: rgba(209, 213, 219, 0.3);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+            --transition-fast: 0.15s;
+            --transition-normal: 0.3s;
+            --border-radius-sm: 6px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
         }
-        .card-header {
-            padding: 1rem;
+
+        /* Animation */
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeSlideIn 0.6s ease forwards;
+        }
+
+        /* Container for the content */
+        .content-container {
+            padding: 1.5rem;
+            max-width: 100%;
+            margin: 0 auto;
+            animation: fadeSlideIn 0.6s ease forwards;
+        }
+        
+        /* Main Card */
+        .users-card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(10px);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        /* Card Header */
+        .users-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(156, 163, 175, 0.1);
+            background-color: transparent;
+        }
+        
+        .page-title {
+            font-size: 1.25rem;
             font-weight: 600;
-            font-size: 1.2rem;
-            border-bottom: 2px solid #dee2e6;
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .btn-add {
-            position: absolute;
-            right: 1.5rem;
-            top: 0.75rem;
+        
+        .page-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--border-radius-sm);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-size: 1rem;
         }
-        .table th {
-            background-color: #f8f9fa;
+        
+        /* Add Button */
+        .btn-add-user {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            transition: all var(--transition-fast) ease;
+            text-decoration: none;
         }
-        .action-buttons .btn {
-            transition: transform 0.2s;
+        
+        .btn-add-user:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            color: white;
         }
-        .action-buttons .btn:hover {
-            transform: scale(1.1);
-        }
+        
+        /* Alert Password */
         .alert-password {
-            border-left: 4px solid #28a745;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--success);
+            border-radius: var(--border-radius-md);
+            padding: 1.25rem;
+            margin: 1.5rem;
         }
-        .id-badge {
-            background-color: #e9ecef;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
+        
+        .alert-password .alert-heading {
+            color: var(--success);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .user-value {
+            font-weight: 500;
+        }
+        
+        .password-code {
+            background-color: rgba(243, 244, 246, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
             font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+            border: 1px solid var(--glass-border);
+        }
+        
+        /* Search Form */
+        .search-container {
+            padding: 1.5rem 1.5rem 0;
+        }
+        
+        .search-form {
+            display: flex;
+            background-color: var(--bg-input);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+            transition: all var(--transition-fast) ease;
+        }
+        
+        .search-form:focus-within {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
+        .search-icon {
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            color: var(--text-medium);
+            background-color: transparent;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem 0.75rem 0;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+        
+        .search-button {
+            padding: 0.75rem 1.25rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            font-weight: 500;
+            transition: all var(--transition-fast) ease;
+        }
+        
+        .search-button:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-dark));
+        }
+        
+        /* Table Styles */
+        .table-container {
+            padding: 0 1.5rem 1.5rem;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1.5rem;
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+        }
+        
+        .users-table thead th {
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.05));
+            color: var(--text-dark);
+            font-weight: 600;
+            text-align: left;
+            font-size: 0.9rem;
+            border: none;
+        }
+        
+        .users-table tbody tr {
+            transition: background-color var(--transition-fast) ease;
+        }
+        
+        .users-table tbody tr:hover {
+            background-color: rgba(243, 244, 246, 0.5);
+        }
+        
+        .users-table td {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid rgba(156, 163, 175, 0.1);
+            vertical-align: middle;
+        }
+        
+        /* ID Badge */
+        .id-badge {
+            display: inline-block;
+            background-color: rgba(243, 244, 246, 0.7);
+            border: 1px solid var(--glass-border);
+            color: var(--text-medium);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius-sm);
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        
+        /* User Data */
+        .user-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .user-email {
+            font-family: monospace;
+            color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.08);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.85rem;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-action {
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--glass-border);
+            background-color: var(--bg-card);
+            color: var(--text-medium);
+            transition: all var(--transition-fast) ease;
+        }
+        
+        .btn-edit {
+            color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.1);
+            border-color: rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn-edit:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn-delete {
+            color: var(--error);
+            background-color: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        
+        .btn-delete:hover {
+            background-color: var(--error);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            padding: 3rem 0;
+            text-align: center;
+            color: var(--text-light);
+        }
+        
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        /* Pagination */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 0.25rem;
+        }
+        
+        .page-item .page-link {
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0.75rem;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--glass-border);
+            background-color: var(--bg-card);
+            color: var(--text-medium);
+            text-decoration: none;
+            transition: all var(--transition-fast) ease;
+        }
+        
+        .page-item .page-link:hover {
+            background-color: var(--bg-sidebar-hover);
+            color: var(--primary);
+        }
+        
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .users-table th:nth-child(1),
+            .users-table td:nth-child(1) {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .users-card-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
 <body class="bg-light">
 <div layout:fragment="content1">
 <div class="container py-4">
-    <div class="card">
-        <div class="card-header position-relative bg-success bg-gradient text-white">
-            <i class="bi bi-people-fill me-2"></i>Liste des Annotateurs
-            <a class="btn btn-sm btn-light btn-add" th:href="@{/admin/user/add}">
-                <i class="bi bi-plus-square-fill me-1"></i>Ajouter
-            </a>
-        </div>
-
-        <!-- Message de succès avec le mot de passe généré -->
-        <div th:if="${generatedPassword}" class="alert alert-success m-3 alert-password">
-            <h5 class="alert-heading"><i class="bi bi-check-circle me-2"></i>Nouvel utilisateur créé avec succès!</h5>
-            <hr>
-            <p><strong>Login:</strong> <span th:text="${newUser.login}" class="user-value"></span></p>
-            <p><strong>Mot de passe:</strong> <code th:text="${generatedPassword}" class="px-2 py-1 bg-light"></code></p>
-            <p class="text-danger mb-0"><i class="bi bi-exclamation-triangle me-1"></i>Veuillez noter ce mot de passe, il ne sera plus affiché ultérieurement.</p>
-        </div>
-
-        <div class="card-body">
-            <!-- Barre de recherche -->
-            <form method="get" th:action="@{/admin/user/list}" class="mb-4">
-                <div class="input-group">
-                    <span class="input-group-text bg-success text-white">
+    <div class="content-container animate-fade-in">
+        <div class="users-card">
+            <div class="users-card-header">
+                <div class="page-title">
+                    <div class="page-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    Liste des Annotateurs
+                </div>
+                <a class="btn-add-user" th:href="@{/admin/user/add}">
+                    <i class="bi bi-plus-square-fill"></i>
+                    <span>Ajouter</span>
+                </a>
+            </div>
+            
+            <!-- Message de succès avec le mot de passe généré -->
+            <div th:if="${generatedPassword}" class="alert-password">
+                <h5 class="alert-heading"><i class="bi bi-check-circle me-2"></i>Nouvel utilisateur créé avec succès!</h5>
+                <hr>
+                <p><strong>Login:</strong> <span th:text="${newUser.login}" class="user-value"></span></p>
+                <p><strong>Mot de passe:</strong> <span th:text="${generatedPassword}" class="password-code"></span></p>
+                <p class="text-warning mb-0"><i class="bi bi-exclamation-triangle me-1"></i>Veuillez noter ce mot de passe, il ne sera plus affiché ultérieurement.</p>
+            </div>
+            
+            <div class="search-container">
+                <form method="get" th:action="@{/admin/user/list}" class="search-form">
+                    <div class="search-icon">
                         <i class="bi bi-search"></i>
-                    </span>
-                    <input type="text" name="keyword" th:value="${keyword}" class="form-control"
+                    </div>
+                    <input type="text" name="keyword" th:value="${keyword}" class="search-input"
                            placeholder="Rechercher par nom ou prénom">
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" class="search-button">
                         Rechercher
                     </button>
-                </div>
-            </form>
-
-            <!-- Tableau des annotateurs -->
-            <div class="table-responsive">
-                <table class="table table-hover table-striped">
-                    <thead class="table-success">
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Nom</th>
-                        <th scope="col">Prénom</th>
-                        <th scope="col">Login</th>
-                        <th scope="col" class="text-center">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="p: ${listeAnnotateur}">
-                        <td><span class="id-badge" th:text="${p.id}"></span></td>
-                        <td th:text="${p.nom}" class="fw-semibold"></td>
-                        <td th:text="${p.prenom}"></td>
-                        <td><code th:text="${p.login}" class="text-primary"></code></td>
-                        <td>
-                            <div class="d-flex justify-content-center gap-2 action-buttons">
-                                <a class="btn btn-sm btn-success" title="Modifier"
-                                   th:href="@{/admin/user/edit(id=${p.id}, keyword=${keyword}, page=${currentPage})}">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <a onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet annotateur?')"
-                                   class="btn btn-sm btn-danger" title="Supprimer"
-                                   th:href="@{/admin/user/delete(id=${p.id}, keyword=${keyword}, page=${currentPage})}">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(listeAnnotateur)}">
-                        <td colspan="5" class="text-center py-4 text-muted">
-                            <i class="bi bi-info-circle me-2"></i>Aucun annotateur trouvé
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                </form>
             </div>
 
-            <!-- Pagination -->
-            <nav aria-label="Navigation des pages" th:if="${pages != null && pages.length > 1}" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    <li th:each="pageIndex,status : ${pages}"
-                        th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
-                        <a class="page-link" th:classappend="${status.index == currentPage ? 'bg-success border-success' : ''}"
-                           th:href="@{/admin/user/list(page=${status.index},keyword=${keyword})}"
-                           th:text="${1+status.index}"></a>
-                    </li>
-                </ul>
-            </nav>
+            <!-- Tableau des annotateurs -->
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Login</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p: ${listeAnnotateur}">
+                                <td><span class="id-badge" th:text="${p.id}"></span></td>
+                                <td class="user-name" th:text="${p.nom}"></td>
+                                <td th:text="${p.prenom}"></td>
+                                <td><span class="user-email" th:text="${p.login}"></span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a class="btn-action btn-edit" title="Modifier"
+                                           th:href="@{/admin/user/edit(id=${p.id}, keyword=${keyword}, page=${currentPage})}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a onclick="return confirm('\u00cates-vous s\u00fbr de vouloir supprimer cet annotateur?')"
+                                           class="btn-action btn-delete" title="Supprimer"
+                                           th:href="@{/admin/user/delete(id=${p.id}, keyword=${keyword}, page=${currentPage})}">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <!-- Empty state -->
+                    <div th:if="${#lists.isEmpty(listeAnnotateur)}" class="empty-state">
+                        <i class="bi bi-people"></i>
+                        <h5>Aucun annotateur trouvé</h5>
+                        <p class="text-muted">Aucun résultat ne correspond à votre recherche.</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination-container" th:if="${pages != null && pages.length > 1}">
+                    <ul class="pagination">
+                        <li th:each="pageIndex,status : ${pages}"
+                            th:class="${status.index == currentPage ? 'page-item active' : 'page-item'}">
+                            <a class="page-link"
+                               th:href="@{/admin/user/list(page=${status.index},keyword=${keyword})}"
+                               th:text="${1+status.index}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>

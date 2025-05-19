@@ -6,117 +6,306 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier un Annotateur</title>
-    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
     <style>
-        .card {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 0.5rem;
-            margin: 50px 30px 30px 30px  ;
+        /* Animation */
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .form-control:focus {
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        
+        .animate-fade-in {
+            animation: fadeSlideIn 0.6s ease forwards;
         }
+        
+        /* Form container */
+        .form-container {
+            padding: 1.5rem;
+            max-width: 100%;
+            margin: 0 auto;
+            animation: fadeSlideIn 0.6s ease forwards;
+        }
+        
+        /* Form card */
+        .form-card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            transition: all var(--transition-fast) ease;
+        }
+        
+        /* Form header */
+        .form-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(156, 163, 175, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .form-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius-sm);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .form-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        /* Form content */
+        .form-body {
+            padding: 2rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
         .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
             font-weight: 500;
+            color: var(--text-dark);
+            font-size: 0.95rem;
         }
+        
         .required::after {
             content: " *";
-            color: #dc3545;
+            color: var(--error);
         }
-        .error-feedback {
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--glass-border);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-dark);
+            transition: all var(--transition-fast) ease;
         }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: stretch;
+        }
+        
+        .input-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            border-top-left-radius: var(--border-radius-sm);
+            border-bottom-left-radius: var(--border-radius-sm);
+            border: 1px solid var(--glass-border);
+            border-right: none;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.05));
+            color: var(--primary);
+        }
+        
+        .input-group .form-control {
+            flex: 1;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
         .id-badge {
-            background-color: #e9ecef;
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.05));
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--border-radius-sm);
             font-family: monospace;
             font-size: 1rem;
+            font-weight: 500;
+            color: var(--primary-dark);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .id-label {
+            margin-left: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--text-medium);
+        }
+        
+        .form-helper {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            color: var(--text-medium);
+            margin-top: 0.5rem;
+        }
+        
+        .error-feedback {
+            font-size: 0.85rem;
+            color: var(--error);
+            margin-top: 0.5rem;
+        }
+        
+        /* Form actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all var(--transition-fast) ease;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+        
+        .btn-back {
+            color: var(--text-medium);
+            background-color: transparent;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .btn-back:hover {
+            background-color: var(--bg-sidebar-hover);
+            color: var(--text-dark);
+        }
+        
+        .btn-submit {
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            box-shadow: 0 3px 10px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
         }
     </style>
 </head>
 <body class="bg-light">
 <div layout:fragment="content1">
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10">
-            <div class="card">
-                <div class="card-header bg-success bg-gradient text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-pencil-square me-2"></i>Modifier l'annotateur
-                    </h5>
-                </div>
-                <div class="card-body p-4">
-                    <form method="post" th:action="@{/admin/user/save(page=${page}, keyword=${keyword})}" class="needs-validation" novalidate>
-                        <div class="mb-4">
-                            <label class="form-label">Identifiant</label>
-                            <div class="d-flex align-items-center">
-                                <span class="id-badge me-2" th:text="${annotateur.id}"></span>
-                                <small class="text-muted">(non modifiable)</small>
-                                <input type="hidden" name="id" th:value="${annotateur.id}">
-                            </div>
+    <div class="form-container animate-fade-in">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-12">
+                <div class="form-card">
+                    <div class="form-header">
+                        <div class="form-icon">
+                            <i class="bi bi-pencil-square"></i>
                         </div>
+                        <h3 class="form-title">Modifier l'annotateur</h3>
+                    </div>
+                    
+                    <div class="form-body">
+                        <form method="post" th:action="@{/admin/user/save(page=${page}, keyword=${keyword})}" class="needs-validation" novalidate>
+                            <div class="form-group">
+                                <label class="form-label">Identifiant</label>
+                                <div class="d-flex align-items-center">
+                                    <span class="id-badge" th:text="${annotateur.id}"></span>
+                                    <span class="id-label">(non modifiable)</span>
+                                    <input type="hidden" name="id" th:value="${annotateur.id}">
+                                </div>
+                            </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="mb-3">
+                            <div class="form-row">
+                                <div class="form-group">
                                     <label for="nom" class="form-label required">Nom</label>
                                     <input id="nom" type="text" name="nom" class="form-control"
                                            th:value="${annotateur.nom}" required>
-                                    <div class="error-feedback text-danger" th:if="${#fields.hasErrors('annotateur.nom')}"
+                                    <div class="error-feedback" th:if="${#fields.hasErrors('annotateur.nom')}"
                                          th:errors="${annotateur.nom}"></div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
+                                
+                                <div class="form-group">
                                     <label for="prenom" class="form-label required">Prénom</label>
                                     <input id="prenom" type="text" name="prenom" class="form-control"
                                            th:value="${annotateur.prenom}" required>
-                                    <div class="error-feedback text-danger" th:if="${#fields.hasErrors('annotateur.prenom')}"
+                                    <div class="error-feedback" th:if="${#fields.hasErrors('annotateur.prenom')}"
                                          th:errors="${annotateur.prenom}"></div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mb-4">
-                            <label for="login" class="form-label required">Login</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input id="login" type="text" name="login" class="form-control"
-                                       th:value="${annotateur.login}" required>
+                            <div class="form-group">
+                                <label for="login" class="form-label required">Login</label>
+                                <div class="input-group">
+                                    <div class="input-icon">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                    <input id="login" type="text" name="login" class="form-control"
+                                           th:value="${annotateur.login}" required>
+                                </div>
+                                <div class="error-feedback" th:if="${#fields.hasErrors('annotateur.login')}"
+                                     th:errors="${annotateur.login}"></div>
                             </div>
-                            <div class="error-feedback text-danger" th:if="${#fields.hasErrors('annotateur.login')}"
-                                 th:errors="${annotateur.login}"></div>
-                        </div>
 
-                        <div class="mb-4">
-                            <label for="email" class="form-label required">Email</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input id="email" type="email" name="email" class="form-control"
-                                       th:value="${annotateur.email}" required>
+                            <div class="form-group">
+                                <label for="email" class="form-label required">Email</label>
+                                <div class="input-group">
+                                    <div class="input-icon">
+                                        <i class="bi bi-envelope"></i>
+                                    </div>
+                                    <input id="email" type="email" name="email" class="form-control"
+                                           th:value="${annotateur.email}" required>
+                                </div>
+                                <div class="error-feedback" th:if="${#fields.hasErrors('annotateur.email')}"
+                                     th:errors="${annotateur.email}"></div>
                             </div>
-                            <div class="error-feedback text-danger" th:if="${#fields.hasErrors('annotateur.email')}"
-                                 th:errors="${annotateur.email}"></div>
-                        </div>
 
-                        <div class="d-flex justify-content-between mt-4">
-                            <a th:href="@{/admin/user/list(page=${page}, keyword=${keyword})}" class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left me-1"></i>Retour
-                            </a>
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-save me-1"></i>Enregistrer les modifications
-                            </button>
-                        </div>
-                    </form>
+                            <div class="form-actions">
+                                <a th:href="@{/admin/user/list(page=${page}, keyword=${keyword})}" class="btn btn-back">
+                                    <i class="bi bi-arrow-left"></i>
+                                    <span>Retour</span>
+                                </a>
+                                <button type="submit" class="btn btn-submit">
+                                    <i class="bi bi-save"></i>
+                                    <span>Enregistrer les modifications</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    
-</div>
 </div>
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 </body>

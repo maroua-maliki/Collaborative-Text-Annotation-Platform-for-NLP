@@ -7,130 +7,296 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajouter une Tâche</title>
-    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* Animation */
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
+        
+        .animate-fade-in {
+            animation: fadeSlideIn 0.6s ease forwards;
+        }
+        
+        /* Form container */
         .form-container {
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            margin: 100px 30px 30px 30px  ;
+            padding: 1.5rem;
+            max-width: 100%;
+            margin: 0 auto;
+            animation: fadeSlideIn 0.6s ease forwards;
         }
+        
+        /* Form card */
+        .form-card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            transition: all var(--transition-fast) ease;
+        }
+        
+        /* Form header */
         .form-header {
-            background-color: #198754;
-            color: white;
-            padding: 20px;
-            border-radius: 10px 10px 0 0;
-            margin: -30px -30px 30px -30px;
-        }
-        .form-control, .form-select {
-            border-radius: 8px;
-            padding: 12px;
-            border: 1px solid #ced4da;
-            margin-bottom: 5px;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #198754;
-            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
-        }
-        .form-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 8px;
-        }
-        .btn-primary {
-            background-color: #198754;
-            border-color: #198754;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-        }
-        .btn-primary:hover {
-            background-color: #146c43;
-            border-color: #146c43;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-        }
-        .form-icon {
-            color: #198754;
-            font-size: 1.2rem;
-            margin-right: 5px;
-        }
-        .required-field::after {
-            content: " *";
-            color: red;
-        }
-        .actions-container {
-            margin-top: 30px;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(156, 163, 175, 0.1);
             display: flex;
-            gap: 10px;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .form-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--border-radius-sm);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .form-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        /* Form content */
+        .form-body {
+            padding: 2rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--error);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--glass-border);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-dark);
+            transition: all var(--transition-fast) ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--success-light);
+            box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.15);
+        }
+        
+        .form-helper {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.85rem;
+            color: var(--text-medium);
+            margin-top: 0.5rem;
+        }
+        
+        /* Input icons */
+        .input-group {
+            display: flex;
+            align-items: stretch;
+        }
+        
+        .input-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            border-top-left-radius: var(--border-radius-sm);
+            border-bottom-left-radius: var(--border-radius-sm);
+            border: 1px solid var(--glass-border);
+            border-right: none;
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(58, 12, 163, 0.05));
+            color: var(--primary);
+        }
+        
+        .input-group .form-control {
+            flex: 1;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        /* File upload */
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-upload input[type=file] {
+            font-size: 0.95rem;
+            padding: 0.75rem;
+        }
+        
+        /* Form actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all var(--transition-fast) ease;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+        
+        .btn-back {
+            color: var(--text-medium);
+            background-color: transparent;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .btn-back:hover {
+            background-color: var(--bg-sidebar-hover);
+            color: var(--text-dark);
+        }
+        
+        .btn-submit {
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            box-shadow: 0 3px 10px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
         }
     </style>
 </head>
 <body>
 <div layout:fragment="content1">
-<div class="container">
-
-    <div class="form-container">
-        <div class="form-header">
-            <h3 class="mb-0"><i class="bi bi-clipboard-plus"></i> Créer une nouvelle tâche</h3>
+    <div class="form-container animate-fade-in">
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10 col-md-12">
+                <div class="form-card">
+                    <div class="form-header">
+                        <div class="form-icon">
+                            <i class="bi bi-clipboard-plus"></i>
+                        </div>
+                        <h3 class="form-title">Créer une nouvelle tâche</h3>
+                    </div>
+                    
+                    <div class="form-body">
+                        <form method="post" th:action="@{/admin/dataset/save}" enctype="multipart/form-data" class="needs-validation" novalidate>
+                            <div class="form-group">
+                                <label for="nomDataset" class="form-label required">Nom du dataset</label>
+                                <div class="input-group">
+                                    <div class="input-icon">
+                                        <i class="bi bi-database"></i>
+                                    </div>
+                                    <input type="text" id="nomDataset" name="nomDataset" class="form-control" 
+                                           th:value="${dataset.nomDataset}" required>
+                                </div>
+                                <div class="form-helper">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span>Entrez un nom pour ce dataset</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="datasetFile" class="form-label required">Importer un dataset</label>
+                                <div class="file-upload">
+                                    <input type="file" id="datasetFile" name="datasetFile" class="form-control" required>
+                                </div>
+                                <div class="form-helper">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span>Fichier du dataset à importer (CSV, XLSX, etc.)</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="classesPossibles" class="form-label required">Classes Possibles</label>
+                                <div class="input-group">
+                                    <div class="input-icon">
+                                        <i class="bi bi-tags"></i>
+                                    </div>
+                                    <input type="text" id="classesPossibles" name="classesPossibles" class="form-control" 
+                                           placeholder="Séparé par des virgules (ex: Positif, Négatif, Neutre)" required>
+                                </div>
+                                <div class="form-helper">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span>Entrez les classes possibles, séparées par des virgules</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description" class="form-label required">Description</label>
+                                <div class="input-group">
+                                    <div class="input-icon">
+                                        <i class="bi bi-info-circle"></i>
+                                    </div>
+                                    <input type="text" id="description" name="description" class="form-control" 
+                                           th:value="${dataset.description}" required>
+                                </div>
+                                <div class="form-helper">
+                                    <i class="bi bi-info-circle"></i>
+                                    <span>Entrez une description pour ce dataset</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <a th:href="@{/admin/home}" class="btn btn-back">
+                                    <i class="bi bi-x-circle"></i>
+                                    <span>Annuler</span>
+                                </a>
+                                <button type="submit" class="btn btn-submit">
+                                    <i class="bi bi-check-circle"></i>
+                                    <span>Enregistrer</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <form method="post" th:action="@{/admin/dataset/save}" enctype="multipart/form-data">
-            <!-- Ajout du champ pour le nom du dataset -->
-            <div class="mb-4">
-                <label for="nomDataset" class="form-label required-field">
-                    <i class="bi bi-database form-icon"></i> Nom du dataset
-                </label>
-                <input type="text" id="nomDataset" name="nomDataset" class="form-control" th:value="${dataset.nomDataset}" required>
-                <small class="text-muted">Entrez un nom pour ce dataset</small>
-            </div>
-
-            <div class="mb-4">
-                <label for="datasetFile" class="form-label mt-3 required-field">
-                    <i class="bi bi-upload form-icon"></i> Importer un dataset
-                </label>
-                <input type="file" id="datasetFile" name="datasetFile" class="form-control" required>
-                <small class="text-muted">Fichier du dataset à importer (CSV, XLSX, etc.)</small>
-            </div>
-
-            <div class="mb-4">
-                <label for="classesPossibles" class="form-label required-field">
-                    <i class="bi bi-tags form-icon"></i> Classes Possibles
-                </label>
-                <input type="text" id="classesPossibles" name="classesPossibles" class="form-control" placeholder="Séparé par des virgules (ex: Positif, Négatif, Neutre)" required>
-                <small class="text-muted">Entrez les classes possibles, séparées par des virgules</small>
-            </div>
-
-            <div class="mb-4">
-                <label for="description" class="form-label required-field">
-                    <i class="bi bi-info-circle form-icon"></i> Description
-                </label>
-                <input type="text" id="description" name="description" class="form-control" th:value="${dataset.description}" required>
-                <small class="text-muted">Entrez une description</small>
-            </div>
-
-            <div class="actions-container">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle"></i> Enregistrer
-                </button>
-                <a th:href="@{/admin/home}" class="btn btn-secondary">
-                    <i class="bi bi-x-circle"></i> Annuler
-                </a>
-            </div>
-        </form>
     </div>
-</div>
 </div>
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 </body>

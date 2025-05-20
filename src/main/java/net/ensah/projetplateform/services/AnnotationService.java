@@ -2,11 +2,13 @@ package net.ensah.projetplateform.services;
 
 import net.ensah.projetplateform.entities.Annotations;
 import net.ensah.projetplateform.entities.ClassePossible;
-import net.ensah.projetplateform.entities.CoupleTexte;
+
+import java.util.List;
 
 public interface AnnotationService {
     Annotations saveAnnotation(Long coupleTexteId, Long classeId, String username);
     Annotations getAnnotationByCoupleTexteId(Long coupleTexteId);
     ClassePossible getClassePossibleById(Long classeId);
     Annotations updateAnnotation(Long coupleTexteId, Long classeId);
+    List<Annotations> getAllAnnotations();
 }

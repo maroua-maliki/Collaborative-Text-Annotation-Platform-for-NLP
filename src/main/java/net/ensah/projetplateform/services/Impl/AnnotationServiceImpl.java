@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
 
@@ -96,5 +98,10 @@ public class AnnotationServiceImpl implements AnnotationService {
         coupleTexteRepository.save(coupleTexte);
         
         return annotation;
+    }
+
+    @Override
+    public List<Annotations> getAllAnnotations() {
+        return annotationsRepository.findAll();
     }
 }

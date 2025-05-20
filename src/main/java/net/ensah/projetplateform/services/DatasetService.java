@@ -28,4 +28,5 @@ public interface DatasetService {
     void deleteDataset(Long id);
     // Ajouter cette méthode à l'interface
     List<Map<String, Object>> getDatasetsWithProgress();
+    CoupleTexte getCoupleTexteById(Long id);
 }

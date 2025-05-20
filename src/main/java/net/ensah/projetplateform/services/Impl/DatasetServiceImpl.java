@@ -320,4 +320,10 @@ public class DatasetServiceImpl implements DatasetService {
         return datasetsAvecAvancement;
     }
 
+    @Override
+    public CoupleTexte getCoupleTexteById(Long id) {
+        return coupleTextRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Couple de texte non trouvé avec l'ID: " + id));
+    }
+
 }

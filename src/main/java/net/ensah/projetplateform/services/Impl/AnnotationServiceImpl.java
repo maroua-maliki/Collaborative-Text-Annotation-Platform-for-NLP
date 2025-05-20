@@ -72,4 +72,29 @@ public class AnnotationServiceImpl implements AnnotationService {
         return classePossibleRepository.findById(classeId)
                 .orElseThrow(() -> new RuntimeException("Classe non trouvée"));
     }
+
+    @Override
+    @Transactional
+    public Annotations updateAnnotation(Long coupleTexteId, Long classeId) {
+        CoupleTexte coupleTexte = coupleTexteRepository.findById(coupleTexteId)
+                .orElseThrow(() -> new RuntimeException("Couple de texte non trouvé"));
+        
+        ClassePossible classe = classePossibleRepository.findById(classeId)
+                .orElseThrow(() -> new RuntimeException("Classe non trouvée"));
+        
+        Annotations annotation = coupleTexte.getAnnotations();
+        if (annotation == null) {
+            annotation = new Annotations();
+            annotation.setCoupleTexte(coupleTexte);
+            // Conserver l'annotateur existant ou null si c'est une nouvelle annotation
+        }
+        
+        annotation.setClasseChoisie(classe.getNomClasse());
+        
+        annotation = annotationsRepository.save(annotation);
+        coupleTexte.setAnnotations(annotation);
+        coupleTexteRepository.save(coupleTexte);
+        
+        return annotation;
+    }
 }

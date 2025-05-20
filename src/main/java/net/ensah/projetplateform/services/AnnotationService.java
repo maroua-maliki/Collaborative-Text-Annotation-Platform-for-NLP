@@ -8,4 +8,5 @@ public interface AnnotationService {
     Annotations saveAnnotation(Long coupleTexteId, Long classeId, String username);
     Annotations getAnnotationByCoupleTexteId(Long coupleTexteId);
     ClassePossible getClassePossibleById(Long classeId);
+    Annotations updateAnnotation(Long coupleTexteId, Long classeId);
 }

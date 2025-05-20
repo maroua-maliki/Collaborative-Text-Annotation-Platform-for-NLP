@@ -338,6 +338,26 @@
             background-color: var(--bg-sidebar-hover);
             color: var(--text-dark);
         }
+        
+        /* Edit button styling */
+        .btn-edit-annotation {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--border-radius-sm);
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            margin-left: 0.5rem;
+            transition: all var(--transition-fast) ease;
+        }
+
+        .btn-edit-annotation:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -395,6 +415,13 @@
                                               th:text="${couple.annotations.classeChoisie}"></span>
                                         <span th:if="${couple.annotations == null}"
                                               class="annotation-badge badge-not-annotated">Non annoté</span>
+                                        
+                                        <!-- Bouton d'édition -->
+                                        <a th:if="${couple.annotations != null}" 
+                                           th:href="@{/admin/dataset/edit-annotation/{coupleId}(coupleId=${couple.id}, datasetId=${dataset.id})}"
+                                           class="btn-edit-annotation">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
                                     </td>
                                     <td>
                                         <span th:if="${couple.annotations != null && couple.annotations.annotateur != null}"

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/template}">
+<head>
+    <title>Statistiques</title>
+    <!-- Ajouter Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Styles spécifiques à la page statistiques */
+        .page-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #4361EE, #3A56D4);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 1rem;
+        }
+        
+        .page-title {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            border: 1px solid #f1f1f1;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .stat-icon {
+            margin-bottom: 1rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .users-icon {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+        
+        .tasks-icon {
+            background: linear-gradient(135deg, #4361EE, #3A56D4);
+        }
+        
+        .annotations-icon {
+            background: linear-gradient(135deg, #7209B7, #560BAD);
+        }
+        
+        .datasets-icon {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid #f1f1f1;
+        }
+        
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-title {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .progress-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .progress-bar-container {
+            height: 10px;
+            background-color: #f1f5f9;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+        
+        .chart-wrapper {
+            height: 300px;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="container py-4">
+        <div class="animate-fade-in">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-title">
+                    <div class="page-title-icon">
+                        <i class="bi bi-bar-chart-fill"></i>
+                    </div>
+                    <span>Statistiques de la plateforme</span>
+                </div>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card animate-fade-in animate-delay-1">
+                    <div class="stat-icon users-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div class="stat-value" th:text="${totalUsers ?: '24'}">24</div>
+                    <div class="stat-label">Annotateurs</div>
+                </div>
+                
+                <div class="stat-card animate-fade-in animate-delay-2">
+                    <div class="stat-icon tasks-icon">
+                        <i class="bi bi-list-check"></i>
+                    </div>
+                    <div class="stat-value" th:text="${totalTasks ?: '36'}">36</div>
+                    <div class="stat-label">Tâches</div>
+                </div>
+                
+                <div class="stat-card animate-fade-in animate-delay-3">
+                    <div class="stat-icon annotations-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="stat-value" th:text="${totalAnnotations ?: '156'}">156</div>
+                    <div class="stat-label">Annotations complétées</div>
+                </div>
+                
+                <div class="stat-card animate-fade-in animate-delay-4">
+                    <div class="stat-icon datasets-icon">
+                        <i class="bi bi-database-fill"></i>
+                    </div>
+                    <div class="stat-value" th:text="${totalDatasets ?: '8'}">8</div>
+                    <div class="stat-label">Datasets</div>
+                </div>
+            </div>
+            
+            <!-- Progress Charts -->
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="chart-container animate-fade-in animate-delay-5">
+                        <h3 class="chart-title">Progression des annotations</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="datasetProgressChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-4">
+                    <div class="chart-container animate-fade-in animate-delay-6">
+                        <h3 class="chart-title">Performance des annotateurs</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="performanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ajoutez une nouvelle section pour un graphique supplémentaire -->
+            <div class="row">
+                <div class="col-lg-12 mb-4">
+                    <div class="chart-container animate-fade-in animate-delay-7">
+                        <h3 class="chart-title">Évolution des annotations</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="annotationTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Script pour initialiser les graphiques -->
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Données pour le graphique de progression des datasets
+                    const datasetNames = /*[[${datasetNames ?: ['Dataset 1', 'Dataset 2', 'Dataset 3']}]]*/ ['Dataset 1', 'Dataset 2', 'Dataset 3'];
+                    const datasetProgress = /*[[${datasetProgress ?: [75, 45, 90]}]]*/ [75, 45, 90];
+                    
+                    // Graphique de progression des datasets
+                    new Chart(document.getElementById('datasetProgressChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: datasetNames,
+                            datasets: [{
+                                label: 'Progression (%)',
+                                data: datasetProgress,
+                                backgroundColor: [
+                                    'rgba(16, 185, 129, 0.7)',
+                                    'rgba(67, 97, 238, 0.7)',
+                                    'rgba(114, 9, 183, 0.7)'
+                                ],
+                                borderColor: [
+                                    'rgb(16, 185, 129)',
+                                    'rgb(67, 97, 238)',
+                                    'rgb(114, 9, 183)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Graphique de performance
+                    new Chart(document.getElementById('performanceChart'), {
+                        type: 'radar',
+                        data: {
+                            labels: ['Précision', 'Vitesse', 'Participation', 'Cohérence', 'Qualité'],
+                            datasets: [{
+                                label: 'Performance moyenne',
+                                data: [
+                                    /*[[${avgPrecision?.replace('%', '') ?: 82}]]*/ 82,
+                                    /*[[${annotationSpeed?.replace('%', '') ?: 68}]]*/ 68,
+                                    /*[[${participationRate?.replace('%', '') ?: 95}]]*/ 95,
+                                    /*[[${consistencyRate ?: 75}]]*/ 75,
+                                    /*[[${qualityRate ?: 88}]]*/ 88
+                                ],
+                                backgroundColor: 'rgba(67, 97, 238, 0.2)',
+                                borderColor: 'rgb(67, 97, 238)',
+                                pointBackgroundColor: 'rgb(67, 97, 238)',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: 'rgb(67, 97, 238)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    angleLines: {
+                                        display: true
+                                    },
+                                    suggestedMin: 0,
+                                    suggestedMax: 100
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Graphique d'évolution des annotations
+                    new Chart(document.getElementById('annotationTrendChart'), {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'],
+                            datasets: [{
+                                label: 'Annotations complétées',
+                                data: /*[[${monthlyAnnotations ?: [20, 45, 75, 90, 120, 140, 156]}]]*/ [20, 45, 75, 90, 120, 140, 156],
+                                fill: true,
+                                backgroundColor: 'rgba(114, 9, 183, 0.2)',
+                                borderColor: 'rgb(114, 9, 183)',
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+</body>
+</html>

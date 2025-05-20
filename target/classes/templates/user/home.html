@@ -7,14 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espace Utilisateur</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Styles conservés mais sans modification des éléments de navigation -->
     <style>
-        /* Welcome Card Styles */
         .welcome-card {
             border: none;
             background: linear-gradient(135deg, var(--primary-light) 0%, rgba(76, 201, 240, 0.2) 100%);
             margin-bottom: 1.5rem;
         }
-        
+
         .welcome-icon {
             width: 60px;
             height: 60px;
@@ -27,28 +27,28 @@
             font-size: 28px;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
-        
+
         .welcome-title {
             font-size: 1.5rem;
             font-weight: 600;
             color: var(--text-dark);
         }
-        
+
         .welcome-subtitle {
             color: var(--text-medium);
         }
-        
+
         /* Stat Cards */
         .stat-card {
             height: 100%;
             border: none;
             transition: all var(--transition-fast) ease;
         }
-        
+
         .stat-card:hover {
             transform: translateY(-5px);
         }
-        
+
         .stat-title {
             font-size: 0.9rem;
             color: var(--text-medium);
@@ -57,14 +57,14 @@
             margin-bottom: 0.5rem;
             font-weight: 500;
         }
-        
+
         .stat-value {
             font-size: 1.8rem;
             font-weight: 700;
             margin-bottom: 0;
             color: var(--text-dark);
         }
-        
+
         .stat-icon {
             width: 50px;
             height: 50px;
@@ -75,382 +75,34 @@
             font-size: 20px;
             color: white;
         }
-        
+
         .task-icon {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         }
-        
+
         .complete-icon {
             background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
         }
-        
+
         .text-icon {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         }
-        
+
         .stat-progress {
             height: 8px;
             border-radius: 4px;
             background-color: var(--bg-sidebar);
             overflow: hidden;
         }
-        
+
         .stat-progress .progress-bar {
             background: linear-gradient(to right, var(--primary), var(--secondary));
             border-radius: 4px;
-        }
-        
-        /* Enhanced Action Cards */
-        .action-badge {
-            background: linear-gradient(135deg, var(--primary) 20%, var(--secondary) 100%);
-            color: white;
-            font-size: 0.75rem;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .action-card {
-            position: relative;
-            padding: 1.5rem;
-            border-radius: var(--border-radius-md);
-            background-color: var(--bg-card);
-            text-decoration: none;
-            color: var(--text-dark);
-            transition: all var(--transition-fast) ease;
-            border: 1px solid var(--glass-border);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-        }
-        
-        .action-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
-            transition: all var(--transition-fast) ease;
-        }
-        
-        .task-action::before {
-            background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
-        }
-        
-        .annotate-action::before {
-            background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
-        }
-        
-        .profile-action::before {
-            background: linear-gradient(to bottom, #8b5cf6, #6d28d9);
-        }
-        
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .action-card-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .action-card-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            margin-bottom: 1.25rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            transition: all var(--transition-normal) ease;
-        }
-        
-        .task-icon {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        }
-        
-        .annotate-icon {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-        }
-        
-        .profile-icon {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-        }
-        
-        .action-card:hover .action-card-icon {
-            transform: scale(1.1);
-        }
-        
-        .action-card-title {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all var(--transition-fast) ease;
-        }
-        
-        .action-card-desc {
-            margin-bottom: 1.25rem;
-            color: var(--text-medium);
-            font-size: 0.875rem;
-            flex-grow: 1;
-        }
-        
-        .action-card-arrow {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            font-size: 1.25rem;
-            color: var(--text-light);
-            opacity: 0;
-            transform: translateX(-10px);
-            transition: all var(--transition-fast) ease;
-        }
-        
-        .action-card:hover .action-card-arrow {
-            opacity: 1;
-            transform: translateX(0);
-            color: var(--primary);
-        }
-        
-        /* Responsive adjustments for action cards */
-        @media (max-width: 768px) {
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .action-card {
-                padding: 1.25rem;
-            }
-            
-            .action-card-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-                margin-bottom: 1rem;
-            }
-        }
-        
-        /* Recent Activity */
-        .view-all {
-            font-size: 0.875rem;
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            transition: all var(--transition-fast) ease;
-        }
-        
-        .view-all i {
-            margin-left: 0.25rem;
-            transition: transform var(--transition-fast) ease;
-        }
-        
-        .view-all:hover i {
-            transform: translateX(3px);
-        }
-        
-        .activity-list {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .activity-item {
-            display: flex;
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-        
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            margin-right: 1rem;
-            flex-shrink: 0;
-            color: white;
-        }
-        
-        .activity-icon.complete {
-            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
-        }
-        
-        .activity-icon.start {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        }
-        
-        .activity-icon.pending {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        }
-        
-        .activity-title {
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--text-dark);
-        }
-        
-        .activity-desc {
-            margin-bottom: 0.25rem;
-            color: var(--text-medium);
-            font-size: 0.875rem;
-        }
-        
-        .activity-time {
-            font-size: 0.75rem;
-            color: var(--text-light);
-        }
-        
-        /* Performance Card */
-        .performance-card {
-            height: 100%;
-        }
-        
-        .gauge-container {
-            position: relative;
-            width: 180px;
-            height: 90px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-        
-        .gauge {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background-color: var(--bg-sidebar);
-            overflow: hidden;
-        }
-        
-        .gauge-value {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            background: conic-gradient(
-                var(--primary) 0deg, 
-                var(--secondary) 180deg, 
-                var(--bg-sidebar) 180deg, 
-                var(--bg-sidebar) 360deg
-            );
-            border-radius: 50%;
-            transform-origin: center;
-            transform: rotate(-90deg);
-        }
-        
-        .gauge-center {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
-        }
-        
-        .gauge-center::before {
-            content: '';
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background-color: white;
-            z-index: -1;
-        }
-        
-        .performance-details {
-            margin-top: 1.5rem;
-        }
-        
-        .performance-item {
-            margin-bottom: 1rem;
-        }
-        
-        .performance-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--text-medium);
-        }
-        
-        .performance-progress {
-            height: 8px;
-            border-radius: 4px;
-            background-color: var(--bg-sidebar);
-            overflow: hidden;
-        }
-        
-        .performance-progress .progress-bar {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            border-radius: 4px;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 992px) {
-            .gauge-container {
-                width: 140px;
-                height: 70px;
-            }
-            
-            .gauge,
-            .gauge-value {
-                width: 140px;
-                height: 140px;
-            }
-            
-            .gauge-center::before {
-                width: 90px;
-                height: 90px;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .welcome-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 24px;
-            }
-            
-            .welcome-title {
-                font-size: 1.25rem;
-            }
-            
-            .action-button {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .action-icon {
-                margin: 0 0 1rem 0;
-            }
         }
     </style>
 </head>
 <body>
 <div layout:fragment="content1">
-    <!-- Welcome Section -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card welcome-card">
@@ -466,7 +118,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Stats Cards -->
     <div class="row mb-4">
         <div class="col-md-4 mb-3 mb-md-0">
@@ -487,7 +139,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4 mb-3 mb-md-0">
             <div class="card stat-card">
                 <div class="card-body">
@@ -506,7 +158,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-4">
             <div class="card stat-card">
                 <div class="card-body">
@@ -526,229 +178,9 @@
             </div>
         </div>
     </div>
-    
-    <!-- Quick Actions -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="bi bi-lightning-charge me-2 text-primary"></i>
-                        Actions rapides
-                    </h5>
-                    <span class="badge rounded-pill action-badge">3 actions disponibles</span>
-                </div>
-                <div class="card-body p-4">
-                    <div class="actions-grid">
-                        <a th:href="@{/user/tache/list}" class="action-card task-action">
-                            <div class="action-card-content">
-                                <div class="action-card-icon task-icon">
-                                    <i class="bi bi-list-task"></i>
-                                </div>
-                                <h5 class="action-card-title">Voir mes tâches</h5>
-                                <p class="action-card-desc">Consultez toutes vos tâches d'annotation</p>
-                            </div>
-                            <div class="action-card-arrow">
-                                <i class="bi bi-arrow-right"></i>
-                            </div>
-                        </a>
-                        
-                        <a href="#" class="action-card annotate-action">
-                            <div class="action-card-content">
-                                <div class="action-card-icon annotate-icon">
-                                    <i class="bi bi-pencil-square"></i>
-                                </div>
-                                <h5 class="action-card-title">Commencer l'annotation</h5>
-                                <p class="action-card-desc">Démarrer une nouvelle session d'annotation</p>
-                            </div>
-                            <div class="action-card-arrow">
-                                <i class="bi bi-arrow-right"></i>
-                            </div>
-                        </a>
-                        
-                        <a href="#" class="action-card profile-action">
-                            <div class="action-card-content">
-                                <div class="action-card-icon profile-icon">
-                                    <i class="bi bi-person-gear"></i>
-                                </div>
-                                <h5 class="action-card-title">Mon profil</h5>
-                                <p class="action-card-desc">Gérer votre profil et vos préférences</p>
-                            </div>
-                            <div class="action-card-arrow">
-                                <i class="bi bi-arrow-right"></i>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Recent Activity -->
-    <div class="row">
-        <div class="col-md-7 mb-4 mb-md-0">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title">Activité récente</h5>
-                    <a href="#" class="view-all">Tout voir <i class="bi bi-arrow-right"></i></a>
-                </div>
-                <div class="card-body p-0">
-                    <div class="activity-list">
-                        <!-- When there's activity data -->
-                        <div th:if="${#lists.size(recentActivities) > 0}" th:each="activity : ${recentActivities}" class="activity-item">
-                            <div class="activity-icon" th:classappend="${activity.type == 'COMPLETE' ? 'complete' : activity.type == 'START' ? 'start' : 'pending'}">
-                                <i class="bi" th:classappend="${activity.type == 'COMPLETE' ? 'bi-check-circle-fill' : activity.type == 'START' ? 'bi-play-circle-fill' : 'bi-clock'}"></i>
-                            </div>
-                            <div class="activity-content">
-                                <h6 class="activity-title" th:text="${activity.title}">Titre de l'activité</h6>
-                                <p class="activity-desc" th:text="${activity.description}">Description de l'activité</p>
-                                <span class="activity-time" th:text="${activity.date}">15 mai 2025</span>
-                            </div>
-                        </div>
-                        
-                        <!-- When there's no activity data, show placeholder -->
-                        <div th:if="${#lists.size(recentActivities) == 0 || recentActivities == null}">
-                            <div class="activity-item">
-                                <div class="activity-icon start">
-                                    <i class="bi bi-play-circle-fill"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6 class="activity-title">Début d'annotation</h6>
-                                    <p class="activity-desc">Vous avez commencé l'annotation du texte "Introduction aux systèmes NLP"</p>
-                                    <span class="activity-time">Aujourd'hui, 10:30</span>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon complete">
-                                    <i class="bi bi-check-circle-fill"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6 class="activity-title">Annotation terminée</h6>
-                                    <p class="activity-desc">Vous avez terminé l'annotation du texte "Bases de l'apprentissage automatique"</p>
-                                    <span class="activity-time">Hier, 15:45</span>
-                                </div>
-                            </div>
-                            
-                            <div class="activity-item">
-                                <div class="activity-icon pending">
-                                    <i class="bi bi-clock"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <h6 class="activity-title">Tâche assignée</h6>
-                                    <p class="activity-desc">Une nouvelle tâche a été assignée: "Classification des sentiments"</p>
-                                    <span class="activity-time">18 mai 2025</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-md-5">
-            <div class="card performance-card">
-                <div class="card-header">
-                    <h5 class="card-title">Votre performance</h5>
-                </div>
-                <div class="card-body">
-                    <div class="performance-stats text-center mb-4">
-                        <div class="gauge-container">
-                            <div class="gauge">
-                                <div class="gauge-value" th:style="'transform: rotate(' + (${performanceScore} ?: '50') + 'deg)'"></div>
-                            </div>
-                            <div class="gauge-center">
-                                <h3 class="mb-0" th:text="${performanceScore ?: '85'} + '%'">85%</h3>
-                                <p class="mb-0">Précision</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="performance-details">
-                        <div class="performance-item">
-                            <div class="performance-label">Rapidité</div>
-                            <div class="progress performance-progress">
-                                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${speedScore ?: '75'} + '%'" style="width: 75%"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="performance-item">
-                            <div class="performance-label">Cohérence</div>
-                            <div class="progress performance-progress">
-                                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${consistencyScore ?: '90'} + '%'" style="width: 90%"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="performance-item">
-                            <div class="performance-label">Qualité</div>
-                            <div class="progress performance-progress">
-                                <div class="progress-bar" role="progressbar" th:style="'width: ' + ${qualityScore ?: '80'} + '%'" style="width: 80%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    
+
+    <!-- Welcome Section, Stats Cards, etc. -->
 </div>
-<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Fix sidebar toggle functionality
-        const toggleButton = document.querySelector('.toggle-sidebar');
-        const userLayout = document.querySelector('.user-layout');
-        
-        if (toggleButton && userLayout) {
-            toggleButton.addEventListener('click', function() {
-                userLayout.classList.toggle('collapsed');
-            });
-        }
-        
-        // Fix profile dropdown functionality
-        const profileButton = document.getElementById('profile-button');
-        const profileDropdown = document.getElementById('profile-dropdown');
-        
-        if (profileButton && profileDropdown) {
-            profileButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                profileDropdown.classList.toggle('show');
-            });
-            
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (profileDropdown.classList.contains('show') && 
-                    !profileButton.contains(e.target) && 
-                    !profileDropdown.contains(e.target)) {
-                    profileDropdown.classList.remove('show');
-                }
-            });
-        }
-        
-        // Mobile sidebar toggle functionality
-        const sidebar = document.querySelector('.user-sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        const mobileToggle = document.querySelector('.mobile-menu-toggle');
-        
-        if (mobileToggle && sidebar && overlay) {
-            mobileToggle.addEventListener('click', function() {
-                sidebar.classList.add('show');
-                overlay.classList.add('active');
-                userLayout.classList.add('with-sidebar-open');
-                document.body.style.overflow = 'hidden';
-            });
-        }
-        
-        if (overlay) {
-            overlay.addEventListener('click', function() {
-                sidebar.classList.remove('show');
-                overlay.classList.remove('active');
-                userLayout.classList.remove('with-sidebar-open');
-                document.body.style.overflow = '';
-            });
-        }
-    });
-</script>
+<!-- Suppression du script qui interfère avec la sidebar -->
 </body>
 </html>

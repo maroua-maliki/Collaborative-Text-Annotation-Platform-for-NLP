@@ -17,4 +17,5 @@ public interface TacheService {
     // Ajouter cette méthode à l'interface
     List<Map<String, Object>> getTachesAvecAvancement(String username, Pageable pageable);
     List<Map<String, Object>> getTachesAvecAvancementByKeyword(String username, String keyword, Pageable pageable);
+    List<Taches> getTachesActive();
 }

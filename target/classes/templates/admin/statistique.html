@@ -6,32 +6,119 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistiques - Tableau de bord</title>
+    <style>
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--glass-shadow);
+            border: 1px solid var(--glass-border);
+            transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+            backdrop-filter: blur(var(--backdrop-blur));
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(15, 23, 42, 0.1);
+        }
+        
+        .stat-card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(156, 163, 175, 0.1);
+        }
+        
+        .chart-title {
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .chart-subtitle {
+            color: var(--text-medium);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+        
+        .chart-container {
+            position: relative;
+            padding: 1.5rem;
+            height: 300px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        /* Page title icon styling - matching other pages */
+        .page-title-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: #4a6cf7;
+            color: white;
+            border-radius: 12px;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 10px rgba(74, 108, 247, 0.25);
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+        }
+    </style>
 </head>
 <body>
   <div layout:fragment="content1">
     <div class="container py-5">
-      <h1 class="mb-5 text-center">Statistiques Générales</h1>
-      <div class="row g-4">
-        <!-- Évolution des annotations -->
-        <div class="col-lg-4 col-md-6">
-          <div class="stat-card">
-            <div class="chart-title">Évolution des Annotations</div>
-            <canvas id="lineChart"></canvas>
-          </div>
+      <div class="d-flex align-items-center mb-5">
+        <div class="page-title-icon me-3">
+          <i class='bx bx-bar-chart-alt-2 nav_icon'></i>
         </div>
+        <h1 class="mb-0">Statistique</h1>
+      </div>
+      
+      <!-- Stats Grid Layout -->
+      <div class="stats-grid mb-5">
         <!-- Répartition par Dataset -->
-        <div class="col-lg-4 col-md-6">
-          <div class="stat-card">
-            <div class="chart-title">Répartition par Dataset</div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <h3 class="chart-title">Répartition par Dataset</h3>
+            <p class="chart-subtitle">Distribution des textes annotés par dataset</p>
+          </div>
+          <div class="chart-container">
             <canvas id="barChart"></canvas>
           </div>
         </div>
+        
         <!-- Distribution des Classes -->
-        <div class="col-lg-4 col-md-12">
-          <div class="stat-card">
-            <div class="chart-title">Distribution des Classes</div>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <h3 class="chart-title">Distribution des Classes</h3>
+            <p class="chart-subtitle">Répartition des annotations par classe</p>
+          </div>
+          <div class="chart-container">
             <canvas id="pieChart"></canvas>
           </div>
+        </div>
+      </div>
+      
+      <!-- Additional Chart Section -->
+      <div class="stat-card mb-5">
+        <div class="stat-card-header">
+          <h3 class="chart-title">Évolution des Annotations</h3>
+          <p class="chart-subtitle">Progression mensuelle des annotations</p>
+        </div>
+        <div class="chart-container">
+          <canvas id="lineChart"></canvas>
         </div>
       </div>
     </div>
@@ -40,41 +127,36 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
       // Récupération des données depuis le contrôleur
-      const annotationsParMois = /*[[${annotationsParMois}]]*/ [];
       const datasetsData = /*[[${datasetsData}]]*/ [];
       const datasetsLabels = /*[[${datasetsLabels}]]*/ [];
       const classesData = /*[[${classesData}]]*/ [];
       const classesLabels = /*[[${classesLabels}]]*/ [];
+      const annotationsParMois = /*[[${annotationsParMois}]]*/ [];
+      
+      // Palette de couleurs cohérente avec le design system
+      const colorPalette = {
+        primary: '#4361ee',
+        secondary: '#7209b7',
+        success: '#10b981',
+        warning: '#f59e0b',
+        error: '#ef4444',
+        accent: '#4cc9f0',
+        purple: '#6f42c1',
+        teal: '#17a2b8'
+      };
       
       document.addEventListener('DOMContentLoaded', function() {
-        // Graphique d'évolution des annotations
-        new Chart(document.getElementById('lineChart'), {
-          type: 'line',
-          data: {
-            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
-            datasets: [{
-              label: 'Annotations par mois',
-              data: annotationsParMois,
-              borderColor: '#007bff',
-              backgroundColor: 'rgba(0,123,255,0.1)',
-              fill: true,
-              tension: 0.4
-            }]
-          },
-          options: {
-            responsive: true,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: function(context) {
-                    return context.raw + ' annotations';
-                  }
-                }
-              }
-            }
-          }
-        });
+        // Configuration commune pour les graphiques
+        Chart.defaults.font.family = "'Outfit', sans-serif";
+        Chart.defaults.color = '#6b7280';
+        Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+        Chart.defaults.plugins.tooltip.titleColor = '#1f2937';
+        Chart.defaults.plugins.tooltip.bodyColor = '#1f2937';
+        Chart.defaults.plugins.tooltip.borderColor = 'rgba(0, 0, 0, 0.1)';
+        Chart.defaults.plugins.tooltip.borderWidth = 1;
+        Chart.defaults.plugins.tooltip.padding = 12;
+        Chart.defaults.plugins.tooltip.cornerRadius = 8;
+        Chart.defaults.plugins.tooltip.boxPadding = 6;
         
         // Graphique de répartition par dataset
         new Chart(document.getElementById('barChart'), {
@@ -84,11 +166,20 @@
             datasets: [{
               label: 'Textes annotés',
               data: datasetsData,
-              backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6610f2']
+              backgroundColor: [
+                colorPalette.primary,
+                colorPalette.secondary,
+                colorPalette.success,
+                colorPalette.warning,
+                colorPalette.accent
+              ],
+              borderRadius: 6,
+              borderWidth: 0
             }]
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
               tooltip: {
@@ -98,31 +189,108 @@
                   }
                 }
               }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(107, 114, 128, 0.1)'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
             }
           }
         });
         
         // Graphique de distribution des classes
         new Chart(document.getElementById('pieChart'), {
-          type: 'pie',
+          type: 'doughnut',
           data: {
             labels: classesLabels,
             datasets: [{
               data: classesData,
-              backgroundColor: ['#007bff', '#ffc107', '#dc3545', '#28a745', '#6f42c1']
+              backgroundColor: [
+                colorPalette.primary,
+                colorPalette.secondary,
+                colorPalette.success,
+                colorPalette.warning,
+                colorPalette.purple
+              ],
+              borderWidth: 2,
+              borderColor: 'white'
             }]
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
               legend: {
                 position: 'bottom',
+                labels: {
+                  padding: 20,
+                  usePointStyle: true,
+                  pointStyle: 'circle'
+                }
               },
               tooltip: {
                 callbacks: {
                   label: function(context) {
                     return context.raw + ' annotations';
                   }
+                }
+              }
+            },
+            cutout: '60%'
+          }
+        });
+        
+        // Graphique d'évolution des annotations (ligne)
+        const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+        new Chart(document.getElementById('lineChart'), {
+          type: 'line',
+          data: {
+            labels: months,
+            datasets: [{
+              label: 'Annotations',
+              data: annotationsParMois || [65, 78, 90, 120, 145, 132, 158, 170, 190, 210, 240, 255],
+              borderColor: colorPalette.primary,
+              backgroundColor: 'rgba(67, 97, 238, 0.1)',
+              tension: 0.3,
+              fill: true,
+              pointBackgroundColor: 'white',
+              pointBorderColor: colorPalette.primary,
+              pointBorderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return context.raw + ' annotations';
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(107, 114, 128, 0.1)'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
                 }
               }
             }

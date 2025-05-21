@@ -82,4 +82,8 @@ public class TacheServiceImpl implements TacheService {
         }
         return tachesAvecAvancement;
     }
+    @Override
+    public List<Taches> getTachesActive() {
+        return tacheRepository.findByIsFinishedFalse();
+    }
 }

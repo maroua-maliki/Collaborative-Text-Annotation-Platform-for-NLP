@@ -47,7 +47,6 @@ public class MdfAnnotationController {
                                   RedirectAttributes redirectAttributes) {
         
         try {
-            // Utiliser le service pour mettre à jour l'annotation
             annotationService.updateAnnotation(coupleTexteId, classeId);
             redirectAttributes.addFlashAttribute("success", "Annotation modifiée avec succès");
         } catch (Exception e) {

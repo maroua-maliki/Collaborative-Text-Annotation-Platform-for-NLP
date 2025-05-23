@@ -19,9 +19,4 @@ public class loginController {
         return "access-denied";
     }
 
-    @GetMapping("/user/home")
-    public String showUserHome(Model model) {
-        return "user/home";
-    }
-
 }

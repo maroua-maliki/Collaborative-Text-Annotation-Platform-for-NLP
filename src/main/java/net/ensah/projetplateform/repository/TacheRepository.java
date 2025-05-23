@@ -24,4 +24,10 @@ public interface TacheRepository extends JpaRepository<Taches, Long> {
     List<Taches> findByIsFinishedFalse();
 
     List<Taches> findByIsFinishedFalseAndDateLimiteBefore(Date today);
+
+    @Query("SELECT COUNT(t) FROM Taches t WHERE t.annotateur.login = :username AND t.isFinished = false")
+    long countByAnnotateurLoginAndIsFinishedFalse(@Param("username") String username);
+
+    @Query("SELECT COUNT(t) FROM Taches t WHERE t.annotateur.login = :username AND t.isFinished = true")
+    long countByAnnotateurLoginAndIsFinishedTrue(@Param("username") String username);
 }

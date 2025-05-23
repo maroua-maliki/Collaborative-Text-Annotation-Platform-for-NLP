@@ -19,5 +19,8 @@ public interface TacheService {
     List<Map<String, Object>> getTachesAvecAvancementByKeyword(String username, String keyword, Pageable pageable);
     List<Taches> getTachesActive();
     void updateOverdueTasks();
+    long countTachesEnCoursByAnnotateur(String username);
+    long countTachesTermineesByAnnotateur(String username);
+    long countTextesAnnotesByAnnotateur(String username);
 
 }

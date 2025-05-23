@@ -111,4 +111,18 @@ public class TacheServiceImpl implements TacheService {
 
         tacheRepository.saveAll(overdueTasks);
     }
+    @Override
+    public long countTachesEnCoursByAnnotateur(String username) {
+        return tacheRepository.countByAnnotateurLoginAndIsFinishedFalse(username);
+    }
+
+    @Override
+    public long countTachesTermineesByAnnotateur(String username) {
+        return tacheRepository.countByAnnotateurLoginAndIsFinishedTrue(username);
+    }
+
+    @Override
+    public long countTextesAnnotesByAnnotateur(String username) {
+        return coupleTexteRepository.countByTachesAnnotateurLoginAndAnnotationsIsNotNull(username);
+    }
 }

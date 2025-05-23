@@ -21,6 +21,7 @@ public interface TacheService {
     void updateOverdueTasks();
     long countTachesEnCoursByAnnotateur(String username);
     long countTachesTermineesByAnnotateur(String username);
+    long countTachesTousTextesAnnotes(String username);
     long countTextesAnnotesByAnnotateur(String username);
 
 }

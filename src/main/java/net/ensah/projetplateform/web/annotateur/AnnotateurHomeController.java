@@ -25,15 +25,15 @@ public class AnnotateurHomeController {
         // Compter les tâches en cours
         long tachesEnCours = tacheService.countTachesEnCoursByAnnotateur(username);
 
-        // Compter les tâches terminées
-        long tachesTerminees = tacheService.countTachesTermineesByAnnotateur(username);
+        // Compter les tâches où tous les textes sont annotés
+        long tachesTousTextesAnnotes = tacheService.countTachesTousTextesAnnotes(username);
 
         // Compter le nombre total de textes annotés
         long textesAnnotes = tacheService.countTextesAnnotesByAnnotateur(username);
 
         // Ajouter les statistiques au modèle
         model.addAttribute("tachesEnCours", tachesEnCours);
-        model.addAttribute("tachesTerminees", tachesTerminees);
+        model.addAttribute("tachesTerminees", tachesTousTextesAnnotes);
         model.addAttribute("textesAnnotes", textesAnnotes);
 
         return "user/home";

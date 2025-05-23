@@ -122,6 +122,11 @@ public class TacheServiceImpl implements TacheService {
     }
 
     @Override
+    public long countTachesTousTextesAnnotes(String username) {
+        return tacheRepository.countTachesTousTextesAnnotes(username);
+    }
+
+    @Override
     public long countTextesAnnotesByAnnotateur(String username) {
         return coupleTexteRepository.countByTachesAnnotateurLoginAndAnnotationsIsNotNull(username);
     }

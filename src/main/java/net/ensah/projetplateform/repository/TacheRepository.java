@@ -30,4 +30,10 @@ public interface TacheRepository extends JpaRepository<Taches, Long> {
 
     @Query("SELECT COUNT(t) FROM Taches t WHERE t.annotateur.login = :username AND t.isFinished = true")
     long countByAnnotateurLoginAndIsFinishedTrue(@Param("username") String username);
+
+    @Query("SELECT COUNT(DISTINCT t) FROM Taches t " +
+           "WHERE t.annotateur.login = :username " +
+           "AND NOT EXISTS (SELECT 1 FROM CoupleTexte ct " +
+           "WHERE ct.taches = t AND ct.annotations IS NULL)")
+    long countTachesTousTextesAnnotes(@Param("username") String username);
 }

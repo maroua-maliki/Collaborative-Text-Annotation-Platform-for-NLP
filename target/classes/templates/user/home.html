@@ -100,33 +100,26 @@
             border-radius: 4px;
         }
         /* Enhanced Action Cards */
-        .action-badge {
-            background: linear-gradient(135deg, var(--primary) 20%, var(--secondary) 100%);
-            color: white;
-            font-size: 0.75rem;
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-        }
-
         .actions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
+            padding: 1rem 0;
+            margin: 0 auto;
+            max-width: 1200px;
         }
 
         .action-card {
-            position: relative;
-            padding: 1.5rem;
-            border-radius: var(--border-radius-md);
-            background-color: var(--bg-card);
-            text-decoration: none;
-            color: var(--text-dark);
-            transition: all var(--transition-fast) ease;
-            border: 1px solid var(--glass-border);
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             height: 100%;
-            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .action-card::before {
@@ -136,30 +129,25 @@
             left: 0;
             width: 5px;
             height: 100%;
-            transition: all var(--transition-fast) ease;
-        }
-
-        .task-action::before {
-            background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
-        }
-
-        .annotate-action::before {
-            background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
-        }
-
-        .profile-action::before {
-            background: linear-gradient(to bottom, #8b5cf6, #6d28d9);
+            background: var(--primary);
         }
 
         .action-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-card.task-action::before {
+            background: linear-gradient(to bottom, #3b82f6, #1d4ed8);
+        }
+
+        .action-card.annotate-action::before {
+            background: linear-gradient(to bottom, var(--primary), var(--primary-dark));
         }
 
         .action-card-content {
+            padding: 1.5rem;
             flex: 1;
-            display: flex;
-            flex-direction: column;
         }
 
         .action-card-icon {
@@ -347,19 +335,6 @@
                                 </div>
                                 <h5 class="action-card-title">Commencer l'annotation</h5>
                                 <p class="action-card-desc">Démarrer une nouvelle session d'annotation</p>
-                            </div>
-                            <div class="action-card-arrow">
-                                <i class="bi bi-arrow-right"></i>
-                            </div>
-                        </a>
-
-                        <a href="#" class="action-card profile-action">
-                            <div class="action-card-content">
-                                <div class="action-card-icon profile-icon">
-                                    <i class="bi bi-person-gear"></i>
-                                </div>
-                                <h5 class="action-card-title">Mon profil</h5>
-                                <p class="action-card-desc">Gérer votre profil et vos préférences</p>
                             </div>
                             <div class="action-card-arrow">
                                 <i class="bi bi-arrow-right"></i>

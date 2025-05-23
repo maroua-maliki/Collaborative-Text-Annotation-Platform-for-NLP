@@ -308,5 +308,83 @@
     </div>
 </div>
 <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form.needs-validation');
+        
+        // Fonction pour vérifier si un champ est vide
+        function isFieldEmpty(field) {
+            if (field.type === 'file') {
+                return field.files.length === 0;
+            }
+            if (field.type === 'text' || field.type === 'textarea') {
+                return field.value.trim() === '';
+            }
+            return field.value === '';
+        }
+        
+        // Validation lors de la soumission
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Empêcher la soumission par défaut
+            
+            let isValid = true;
+            const requiredFields = form.querySelectorAll('[required]');
+            
+            // Réinitialiser les états de validation
+            form.classList.remove('was-validated');
+            requiredFields.forEach(field => {
+                field.classList.remove('is-invalid');
+                const errorFeedback = field.nextElementSibling;
+                if (errorFeedback && errorFeedback.classList.contains('invalid-feedback')) {
+                    errorFeedback.remove();
+                }
+            });
+            
+            // Vérifier chaque champ requis
+            requiredFields.forEach(field => {
+                if (isFieldEmpty(field)) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                    
+                    // Ajouter le message d'erreur s'il n'existe pas
+                    if (!field.nextElementSibling || !field.nextElementSibling.classList.contains('invalid-feedback')) {
+                        const errorDiv = document.createElement('div');
+                        errorDiv.className = 'invalid-feedback';
+                        errorDiv.textContent = 'Ce champ est obligatoire';
+                        field.parentNode.insertBefore(errorDiv, field.nextSibling);
+                    }
+                }
+            });
+            
+            // Si le formulaire est valide, le soumettre
+            if (isValid) {
+                form.submit();
+            } else {
+                // Faire défiler jusqu'au premier champ invalide
+                const firstInvalidField = form.querySelector('.is-invalid');
+                if (firstInvalidField) {
+                    firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalidField.focus();
+                }
+            }
+        });
+        
+        // Validation en temps réel
+        form.querySelectorAll('[required]').forEach(field => {
+            field.addEventListener('input', function() {
+                if (isFieldEmpty(this)) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                    // Supprimer le message d'erreur s'il existe
+                    const errorFeedback = this.nextElementSibling;
+                    if (errorFeedback && errorFeedback.classList.contains('invalid-feedback')) {
+                        errorFeedback.remove();
+                    }
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

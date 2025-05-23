@@ -10,9 +10,11 @@
     <!-- Styles conservés mais sans modification des éléments de navigation -->
     <style>
         .welcome-card {
-            border: none;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
             background: linear-gradient(135deg, var(--primary-light) 0%, rgba(76, 201, 240, 0.2) 100%);
             margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .welcome-icon {
@@ -41,8 +43,10 @@
         /* Stat Cards */
         .stat-card {
             height: 100%;
-            border: none;
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            border-radius: 12px;
             transition: all var(--transition-fast) ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .stat-card:hover {

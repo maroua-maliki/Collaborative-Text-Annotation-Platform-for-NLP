@@ -455,6 +455,21 @@
                 font-size: 1.2rem;
             }
         }
+        
+        .dataset-description {
+            margin-bottom: 1.5rem;
+        }
+        
+        .dataset-description-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dataset-description-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -498,6 +513,15 @@
                             <div class="task-card-body">
                                 <h3 class="task-name" th:text="${tacheInfo.tache.dataset.nomDataset}"></h3>
                                 
+                                <!-- Description du dataset -->
+                                <div class="dataset-description mb-3">
+                                    <div class="dataset-description-content" th:if="${tacheInfo.tache.dataset.description != null && !tacheInfo.tache.dataset.description.isEmpty()}" th:text="${tacheInfo.tache.dataset.description}">
+                                    </div>
+                                    <div class="dataset-description-content text-muted fst-italic" th:if="${tacheInfo.tache.dataset.description == null || tacheInfo.tache.dataset.description.isEmpty()}">
+                                        Aucune description fournie pour ce dataset.
+                                    </div>
+                                </div>
+                                
                                 <div class="task-meta">
                                     <div class="task-meta-item">
                                         <i class="bi bi-calendar-event"></i>
@@ -505,7 +529,7 @@
                                     </div>
                                     <div class="task-meta-item">
                                         <i class="bi bi-file-text"></i>
-                                        <span th:text="${tacheInfo.textesAnnotes} + ' / ' + ${tacheInfo.totalTextes} + ' textes'"></span>
+                                        <span th:text="${tacheInfo.nbTextesAnnotes} + ' / ' + ${tacheInfo.nbTextes} + ' textes'"></span>
                                     </div>
                                 </div>
                                 
@@ -516,7 +540,7 @@
                             
                             <div class="task-card-footer">
                                 <a class="task-action-button" title="Annoter"
-                                   th:href="@{/user/tache/textes(tacheId=${tacheInfo.tache.id}, textIndex=0)}">
+                                   th:href="@{/user/tache/textes(tacheId=${tacheInfo.tache.id}, textIndex=${tacheInfo.premierNonAnnoteIndex != null ? tacheInfo.premierNonAnnoteIndex : 0})}">
                                     <i class="bi bi-pencil-square"></i> Commencer l'annotation
                                 </a>
                             </div>

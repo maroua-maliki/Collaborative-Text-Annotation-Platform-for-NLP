@@ -65,15 +65,31 @@ public class TacheServiceImpl implements TacheService {
             Map<String, Object> tacheInfo = new HashMap<>();
             tacheInfo.put("tache", tache);
 
-            long totalTextes = tache.getCoupleTexte().size();
-            long textesAnnotes = tache.getCoupleTexte().stream()
-                    .filter(ct -> ct.getAnnotations() != null)
-                    .count();
+            List<CoupleTexte> coupleTextes = tache.getCoupleTexte();
+            long totalTextes = coupleTextes.size();
+            long textesAnnotes = 0;
+            Integer premierNonAnnoteIndex = null;
+
+            for (int i = 0; i < coupleTextes.size(); i++) {
+                CoupleTexte ct = coupleTextes.get(i);
+                if (ct.getAnnotations() != null) {
+                    textesAnnotes++;
+                } else if (premierNonAnnoteIndex == null) {
+                    premierNonAnnoteIndex = i;
+                }
+            }
+
+            // Si tous les textes sont annotés, on prend le premier texte (index 0)
+            if (premierNonAnnoteIndex == null && !coupleTextes.isEmpty()) {
+                premierNonAnnoteIndex = 0;
+            }
 
             int pourcentage = totalTextes > 0 ? (int) ((textesAnnotes * 100) / totalTextes) : 0;
             tacheInfo.put("pourcentage", pourcentage);
-            tacheInfo.put("textesAnnotes", textesAnnotes);
-            tacheInfo.put("totalTextes", totalTextes);
+            tacheInfo.put("nbTextesAnnotes", textesAnnotes);  
+            tacheInfo.put("nbTextes", totalTextes);  
+            tacheInfo.put("premierNonAnnoteIndex", premierNonAnnoteIndex);
+            tacheInfo.put("termine", textesAnnotes == totalTextes && totalTextes > 0);
 
             tachesAvecAvancement.add(tacheInfo);
         }
@@ -90,7 +106,7 @@ public class TacheServiceImpl implements TacheService {
         List<Taches> overdueTasks = tacheRepository.findByIsFinishedFalseAndDateLimiteBefore(today);
 
         for (Taches t : overdueTasks) {
-            t.setFinished(true); // ✅ boolean = true
+            t.setFinished(true); // boolean = true
         }
 
         tacheRepository.saveAll(overdueTasks);

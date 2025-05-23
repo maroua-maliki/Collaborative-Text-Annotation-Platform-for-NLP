@@ -51,6 +51,14 @@ public class StatistiqueController {
         model.addAttribute("classesLabels", classesLabels);
         model.addAttribute("classesData", classesData);
         
+        // 4. Données pour le graphique des annotations par annotateur
+        Map<String, Integer> annotateursDistribution = getAnnotateursDistribution();
+        List<String> annotateursLabels = new ArrayList<>(annotateursDistribution.keySet());
+        List<Integer> annotateursData = new ArrayList<>(annotateursDistribution.values());
+        
+        model.addAttribute("annotateursLabels", annotateursLabels);
+        model.addAttribute("annotateursData", annotateursData);
+        
         return "admin/statistique";
     }
     
@@ -96,6 +104,21 @@ public class StatistiqueController {
             String classe = annotation.getClasseChoisie();
             if (classe != null && !classe.isEmpty()) {
                 distribution.put(classe, distribution.getOrDefault(classe, 0) + 1);
+            }
+        }
+        
+        return distribution;
+    }
+
+    private Map<String, Integer> getAnnotateursDistribution() {
+        Map<String, Integer> distribution = new HashMap<>();
+        
+        List<Annotations> annotations = annotationService.getAllAnnotations();
+        
+        for (Annotations annotation : annotations) {
+            if (annotation.getAnnotateur() != null) {
+                String nomAnnotateur = annotation.getAnnotateur().getNom() + " " + annotation.getAnnotateur().getPrenom();
+                distribution.put(nomAnnotateur, distribution.getOrDefault(nomAnnotateur, 0) + 1);
             }
         }
         

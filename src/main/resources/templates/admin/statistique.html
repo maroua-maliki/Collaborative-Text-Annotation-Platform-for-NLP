@@ -114,15 +114,15 @@
       <!-- Additional Chart Section -->
       <div class="stat-card mb-5">
         <div class="stat-card-header">
-          <h3 class="chart-title">Évolution des Annotations</h3>
-          <p class="chart-subtitle">Progression mensuelle des annotations</p>
+          <h3 class="chart-title">Performance des Annotateurs</h3>
+          <p class="chart-subtitle">Nombre d'annotations par annotateur</p>
         </div>
         <div class="chart-container">
           <canvas id="lineChart"></canvas>
         </div>
       </div>
     </div>
-    
+
     <!-- Chargement de Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script th:inline="javascript">
@@ -131,8 +131,9 @@
       const datasetsLabels = /*[[${datasetsLabels}]]*/ [];
       const classesData = /*[[${classesData}]]*/ [];
       const classesLabels = /*[[${classesLabels}]]*/ [];
-      const annotationsParMois = /*[[${annotationsParMois}]]*/ [];
-      
+      const annotateursLabels = /*[[${annotateursLabels}]]*/ [];
+      const annotateursData = /*[[${annotateursData}]]*/ [];
+
       // Palette de couleurs cohérente avec le design system
       const colorPalette = {
         primary: '#4361ee',
@@ -144,7 +145,7 @@
         purple: '#6f42c1',
         teal: '#17a2b8'
       };
-      
+
       document.addEventListener('DOMContentLoaded', function() {
         // Configuration commune pour les graphiques
         Chart.defaults.font.family = "'Outfit', sans-serif";
@@ -157,7 +158,7 @@
         Chart.defaults.plugins.tooltip.padding = 12;
         Chart.defaults.plugins.tooltip.cornerRadius = 8;
         Chart.defaults.plugins.tooltip.boxPadding = 6;
-        
+
         // Graphique de répartition par dataset
         new Chart(document.getElementById('barChart'), {
           type: 'bar',
@@ -205,7 +206,7 @@
             }
           }
         });
-        
+
         // Graphique de distribution des classes
         new Chart(document.getElementById('pieChart'), {
           type: 'doughnut',
@@ -247,28 +248,22 @@
             cutout: '60%'
           }
         });
-        
-        // Graphique d'évolution des annotations (ligne)
-        const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+
+        // Graphique des performances des annotateurs (barres verticales)
         new Chart(document.getElementById('lineChart'), {
-          type: 'line',
+          type: 'bar',
           data: {
-            labels: months,
+            labels: annotateursLabels,
             datasets: [{
               label: 'Annotations',
-              data: annotationsParMois || [65, 78, 90, 120, 145, 132, 158, 170, 190, 210, 240, 255],
-              borderColor: colorPalette.primary,
-              backgroundColor: 'rgba(67, 97, 238, 0.1)',
-              tension: 0.3,
-              fill: true,
-              pointBackgroundColor: 'white',
-              pointBorderColor: colorPalette.primary,
-              pointBorderWidth: 2,
-              pointRadius: 4,
-              pointHoverRadius: 6
+              data: annotateursData,
+              backgroundColor: colorPalette.primary,
+              borderRadius: 6,
+              borderWidth: 0
             }]
           },
           options: {
+            indexAxis: 'x', // Changer de 'y' à 'x' pour des barres verticales
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -282,13 +277,13 @@
               }
             },
             scales: {
-              y: {
+              y: { // Maintenant l'axe Y représente le nombre d'annotations
                 beginAtZero: true,
                 grid: {
                   color: 'rgba(107, 114, 128, 0.1)'
                 }
               },
-              x: {
+              x: { // L'axe X représente les annotateurs
                 grid: {
                   display: false
                 }

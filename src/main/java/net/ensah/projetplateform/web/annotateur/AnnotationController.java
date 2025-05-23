@@ -22,10 +22,16 @@ public class AnnotationController {
             @RequestParam("coupleTexteId") Long coupleTexteId,
             @RequestParam("tacheId") Long tacheId,
             @RequestParam("textIndex") int textIndex,
-            @RequestParam("classeId") Long classeId,
+            @RequestParam(value = "classeId", required = false) Long classeId,
             RedirectAttributes redirectAttributes) {
 
         try {
+            // Vérifier si une classe a été sélectionnée
+            if (classeId == null) {
+                redirectAttributes.addFlashAttribute("error", "Veuillez sélectionner une classe avant de valider");
+                return "redirect:/user/tache/textes?tacheId=" + tacheId + "&textIndex=" + textIndex;
+            }
+
             // Récupérer l'utilisateur connecté
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String currentUserName = authentication.getName();

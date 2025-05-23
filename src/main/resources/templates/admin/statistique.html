@@ -88,14 +88,14 @@
       
       <!-- Stats Grid Layout -->
       <div class="stats-grid mb-5">
-        <!-- Répartition par Dataset -->
+        <!-- Diagramme pour les datasets -->
         <div class="stat-card">
           <div class="stat-card-header">
-            <h3 class="chart-title">Répartition par Dataset</h3>
-            <p class="chart-subtitle">Distribution des textes annotés par dataset</p>
+            <h3 class="chart-title">Progression des annotations par Dataset</h3>
+            <p class="chart-subtitle">Comparaison entre le nombre de paires de texte et les annotations</p>
           </div>
           <div class="chart-container">
-            <canvas id="barChart"></canvas>
+            <canvas id="datasetComparisonChart"></canvas>
           </div>
         </div>
         
@@ -129,6 +129,7 @@
       // Récupération des données depuis le contrôleur
       const datasetsData = /*[[${datasetsData}]]*/ [];
       const datasetsLabels = /*[[${datasetsLabels}]]*/ [];
+      const totalPairsData = /*[[${totalPairsData}]]*/ [];
       const classesData = /*[[${classesData}]]*/ [];
       const classesLabels = /*[[${classesLabels}]]*/ [];
       const annotateursLabels = /*[[${annotateursLabels}]]*/ [];
@@ -137,7 +138,7 @@
       // Palette de couleurs cohérente avec le design system
       const colorPalette = {
         primary: '#4361ee',
-        secondary: '#7209b7',
+        secondary: '#10b981',
         success: '#10b981',
         warning: '#f59e0b',
         error: '#ef4444',
@@ -159,34 +160,46 @@
         Chart.defaults.plugins.tooltip.cornerRadius = 8;
         Chart.defaults.plugins.tooltip.boxPadding = 6;
 
-        // Graphique de répartition par dataset
-        new Chart(document.getElementById('barChart'), {
+        // Graphique de comparaison datasets
+        new Chart(document.getElementById('datasetComparisonChart'), {
           type: 'bar',
           data: {
             labels: datasetsLabels,
-            datasets: [{
-              label: 'Textes annotés',
-              data: datasetsData,
-              backgroundColor: [
-                colorPalette.primary,
-                colorPalette.secondary,
-                colorPalette.success,
-                colorPalette.warning,
-                colorPalette.accent
-              ],
-              borderRadius: 6,
-              borderWidth: 0
-            }]
+            datasets: [
+              {
+                label: 'Paires de texte',
+                data: totalPairsData,
+                backgroundColor: colorPalette.primary,
+                borderRadius: 4,
+                borderWidth: 0,
+                barPercentage: 0.4
+              },
+              {
+                label: 'Annotations',
+                data: datasetsData,
+                backgroundColor: colorPalette.secondary,
+                borderRadius: 4,
+                borderWidth: 0,
+                barPercentage: 0.4
+              }
+            ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false },
+              legend: { 
+                position: 'top',
+                labels: {
+                  usePointStyle: true,
+                  pointStyle: 'circle',
+                  padding: 20
+                }
+              },
               tooltip: {
                 callbacks: {
                   label: function(context) {
-                    return context.raw + ' textes annotés';
+                    return context.dataset.label + ': ' + context.raw;
                   }
                 }
               }
@@ -196,6 +209,10 @@
                 beginAtZero: true,
                 grid: {
                   color: 'rgba(107, 114, 128, 0.1)'
+                },
+                title: {
+                  display: true,
+                  text: 'Nombre'
                 }
               },
               x: {
@@ -203,7 +220,10 @@
                   display: false
                 }
               }
-            }
+            },
+            // Espacement entre les groupes de barres
+            barPercentage: 0.8,
+            categoryPercentage: 0.8
           }
         });
 
@@ -215,14 +235,15 @@
             datasets: [{
               data: classesData,
               backgroundColor: [
-                colorPalette.primary,
-                colorPalette.secondary,
-                colorPalette.success,
-                colorPalette.warning,
-                colorPalette.purple
+                colorPalette.primary,    // Bleu
+                colorPalette.secondary,  // Vert
+                colorPalette.warning,    // Jaune
+                colorPalette.purple,     // Violet
+                '#20c9a6',  // Turquoise clair
+                '#0d6efd'   // Bleu vif
               ],
-              borderWidth: 2,
-              borderColor: 'white'
+              borderWidth: 1,
+              borderColor: '#fff'
             }]
           },
           options: {
@@ -230,22 +251,32 @@
             maintainAspectRatio: false,
             plugins: {
               legend: {
-                position: 'bottom',
+                position: 'right',
                 labels: {
-                  padding: 20,
+                  padding: 15,
                   usePointStyle: true,
-                  pointStyle: 'circle'
+                  pointStyle: 'circle',
+                  font: {
+                    size: 11
+                  }
                 }
               },
               tooltip: {
                 callbacks: {
                   label: function(context) {
-                    return context.raw + ' annotations';
+                    const label = context.label || '';
+                    const value = context.raw || 0;
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percentage = Math.round((value / total) * 100);
+                    return `${label}: ${value} annotations (${percentage}%)`;
                   }
                 }
               }
             },
-            cutout: '60%'
+            cutout: '60%',
+            layout: {
+              padding: 10
+            }
           }
         });
 

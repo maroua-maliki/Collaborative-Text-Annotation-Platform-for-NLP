@@ -30,18 +30,31 @@ public class StatistiqueController {
         List<Integer> annotationsParMois = getAnnotationsParMois();
         model.addAttribute("annotationsParMois", annotationsParMois);
         
-        // 2. Données pour le graphique de répartition par dataset
+        // 2. Données pour les graphiques de comparaison dataset
         List<Dataset> datasets = datasetService.getAllDatasets();
         List<String> datasetsLabels = datasets.stream()
                 .map(Dataset::getNomDataset)
                 .collect(Collectors.toList());
         
-        List<Integer> datasetsData = datasets.stream()
-                .map(dataset -> countAnnotatedTexts(dataset))
-                .collect(Collectors.toList());
+        // Préparer les données pour les deux séries
+        List<Integer> totalPairsData = new ArrayList<>();
+        List<Integer> annotationsData = new ArrayList<>();
+        
+        for (Dataset dataset : datasets) {
+            // Nombre total de paires de texte dans le dataset
+            int totalPairs = dataset.getCoupleTexte().size();
+            totalPairsData.add(totalPairs);
+            
+            // Nombre d'annotations dans le dataset
+            int annotationsCount = (int) dataset.getCoupleTexte().stream()
+                    .filter(couple -> couple.getAnnotations() != null)
+                    .count();
+            annotationsData.add(annotationsCount);
+        }
         
         model.addAttribute("datasetsLabels", datasetsLabels);
-        model.addAttribute("datasetsData", datasetsData);
+        model.addAttribute("datasetsData", annotationsData);
+        model.addAttribute("totalPairsData", totalPairsData);
         
         // 3. Données pour le graphique de distribution des classes
         Map<String, Integer> classesDistribution = getClassesDistribution();

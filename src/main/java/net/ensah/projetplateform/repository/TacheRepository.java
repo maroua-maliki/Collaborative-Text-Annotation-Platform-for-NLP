@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public interface TacheRepository extends JpaRepository<Taches, Long> {
@@ -20,4 +22,6 @@ public interface TacheRepository extends JpaRepository<Taches, Long> {
 
     @Query("SELECT t FROM Taches t WHERE t.isFinished = false ")
     List<Taches> findByIsFinishedFalse();
+
+    List<Taches> findByIsFinishedFalseAndDateLimiteBefore(Date today);
 }

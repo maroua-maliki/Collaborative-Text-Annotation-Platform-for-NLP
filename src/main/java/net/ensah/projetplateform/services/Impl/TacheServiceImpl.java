@@ -10,10 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TacheServiceImpl implements TacheService {
@@ -85,5 +82,17 @@ public class TacheServiceImpl implements TacheService {
     @Override
     public List<Taches> getTachesActive() {
         return tacheRepository.findByIsFinishedFalse();
+    }
+
+    @Override
+    public void updateOverdueTasks() {
+        Date today = new Date(); // date actuelle
+        List<Taches> overdueTasks = tacheRepository.findByIsFinishedFalseAndDateLimiteBefore(today);
+
+        for (Taches t : overdueTasks) {
+            t.setFinished(true); // ✅ boolean = true
+        }
+
+        tacheRepository.saveAll(overdueTasks);
     }
 }

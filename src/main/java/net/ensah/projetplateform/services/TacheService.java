@@ -18,4 +18,6 @@ public interface TacheService {
     List<Map<String, Object>> getTachesAvecAvancement(String username, Pageable pageable);
     List<Map<String, Object>> getTachesAvecAvancementByKeyword(String username, String keyword, Pageable pageable);
     List<Taches> getTachesActive();
+    void updateOverdueTasks();
+
 }

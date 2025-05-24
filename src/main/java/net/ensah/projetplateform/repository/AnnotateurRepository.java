@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface AnnotateurRepository extends JpaRepository<Annotateur, Long> {
 
     Page<Annotateur> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(String nom, String prenom, Pageable pageable);
@@ -20,6 +22,6 @@ public interface AnnotateurRepository extends JpaRepository<Annotateur, Long> {
 
     Annotateur findByLogin(String login);
 
+    List<Annotateur> findByEmail(String email);
 
 }
-

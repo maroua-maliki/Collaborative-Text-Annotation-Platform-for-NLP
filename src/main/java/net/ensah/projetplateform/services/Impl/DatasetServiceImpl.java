@@ -104,7 +104,7 @@ public class DatasetServiceImpl implements DatasetService {
 
     @Override
     public void parseDatasetFile(Dataset dataset) throws IOException {
-        final int MAX_ROWS = 1000;
+        final int MAX_ROWS = 500;
 
         String filename = dataset.getCheminFichierExport();
         if (filename == null || filename.isEmpty()) {

@@ -1,5 +1,6 @@
 package net.ensah.projetplateform.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
@@ -14,6 +15,7 @@ public class Annotateur extends Utilisateur {
     private Boolean isActive;
 
     @Email(message = "Format d'email invalide")
+    @Column(unique = true)
     @NotEmpty(message = "L'email est obligatoire")
     private String email;
 

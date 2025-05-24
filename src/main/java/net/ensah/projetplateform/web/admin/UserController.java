@@ -94,12 +94,39 @@ public class UserController {
                        @RequestParam(defaultValue = "") String keyword,
                        RedirectAttributes redirectAttributes) {
 
+        // Vérification du login existant
         Annotateur existingAnnotateur = annotateurRepository.findByLogin(annotateur.getLogin());
         if (existingAnnotateur != null && (annotateur.getId() == null || !existingAnnotateur.getId().equals(annotateur.getId()))) {
             bindingResult.rejectValue("login", "error.annotateur", "Ce login est déjà utilisé");
         }
+        
+        // Vérification de l'email existant
+        List<Annotateur> existingEmails = annotateurRepository.findByEmail(annotateur.getEmail());
+        boolean emailExists = false;
+        
+        if (!existingEmails.isEmpty()) {
+            // Si c'est une mise à jour, vérifier si l'email appartient à un autre utilisateur
+            if (annotateur.getId() != null) {
+                for (Annotateur existing : existingEmails) {
+                    if (!existing.getId().equals(annotateur.getId())) {
+                        emailExists = true;
+                        break;
+                    }
+                }
+            } else {
+                // Si c'est une création, l'email existe déjà
+                emailExists = true;
+            }
+        }
+        
+        if (emailExists) {
+            bindingResult.rejectValue("email", "error.annotateur", "Cet email est déjà utilisé");
+        }
 
-        if(bindingResult.hasErrors()) return "admin/GererUser/formUser";
+        if(bindingResult.hasErrors()) {
+            model.addAttribute("annotateur", annotateur);
+            return "admin/GererUser/formUser";
+        }
 
         String clearPassword = null;
         
@@ -166,10 +193,10 @@ public class UserController {
     }
 
     private String generateRandomPassword() {
-        String digits = "0123456789";
+        String digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
-        int length = 4;
+        int length = 8;
 
         for (int i = 0; i < length; i++) {
             int index = random.nextInt(digits.length());

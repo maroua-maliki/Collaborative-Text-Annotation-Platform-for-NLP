@@ -103,10 +103,8 @@ public class AffectationAnnotateurService {
             couple.setTaches(null);
         }
 
-        // Supprimer la tâche
         tacheRepository.delete(tache);
 
-        // Sauvegarder les modifications
         datasetRepository.save(dataset);
     }
 }

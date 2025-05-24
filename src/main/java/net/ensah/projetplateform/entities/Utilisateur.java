@@ -12,9 +12,9 @@ import java.util.List;
 public class Utilisateur {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-    @Size(min = 4, max = 40)
+    @Size(min = 3, max = 40)
     private String nom;
-    @Size(min = 4, max = 40)
+    @Size(min = 3, max = 40)
     private String prenom;
     @Column(unique = true)
     @Size(min = 4, max = 40)

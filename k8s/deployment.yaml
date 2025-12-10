@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app-container
+                # IMPORTANT: Remplacez ceci par l'URL de votre image sur Nexus
+                # Le format est <nexus-url>/<nom-image>:<tag>
+                image: 192.168.1.17:8082/platform-annotation:latest 
+                ports:
+                - containerPort: 8080
+              # Ce secret permet à Kubernetes de s'authentifier auprès de votre Nexus privé
+              # Vous devez le créer manuellement dans votre cluster une fois
+              imagePullSecrets:
+              - name: nexus-secret 

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80       # Port externe accessible
+      targetPort: 8080 # Port interne de votre conteneur
+  # NodePort expose le service sur un port statique sur chaque noeud du cluster.
+  # Idéal pour les tests. Pour la production, on utilise souvent LoadBalancer.
+  type: NodePort

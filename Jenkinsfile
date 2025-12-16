@@ -11,8 +11,17 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/maroua-maliki/Collaborative-Text-Annotation-Platform-for-NLP.git'
+                // Utiliser des credentials GitHub si le repo est privé
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/master']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [[$class: 'CloneOption', timeout: 30]], // timeout en minutes
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/maroua-maliki/Collaborative-Text-Annotation-Platform-for-NLP.git',
+                        credentialsId: 'github-creds' // mettre l'ID de vos credentials GitHub ici
+                    ]]
+                ])
             }
         }
 
@@ -47,11 +56,17 @@ pipeline {
                     passwordVariable: 'NEXUS_PASS'
                 )]) {
                     sh '''
-                    docker login $NEXUS_REGISTRY -u $NEXUS_USER -p $NEXUS_PASS
-                    docker push $NEXUS_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+                        docker login $NEXUS_REGISTRY -u $NEXUS_USER -p $NEXUS_PASS
+                        docker push $NEXUS_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            echo "Pipeline terminé."
         }
     }
 }

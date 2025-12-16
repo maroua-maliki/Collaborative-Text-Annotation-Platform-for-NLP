@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_REGISTRY = "localhost:8082"
+        // Nom du container Nexus si Jenkins est dans Docker
+        NEXUS_REGISTRY = "nexus:8081"
         IMAGE_NAME = "java-app"
         IMAGE_TAG = "v1"
     }
@@ -11,17 +12,9 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                // Utiliser des credentials GitHub si le repo est privé
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/master']],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'CloneOption', timeout: 30]], // timeout en minutes
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/maroua-maliki/Collaborative-Text-Annotation-Platform-for-NLP.git',
-                        credentialsId: 'github-creds' // mettre l'ID de vos credentials GitHub ici
-                    ]]
-                ])
+                git branch: 'master',
+                    url: 'https://github.com/maroua-maliki/Collaborative-Text-Annotation-Platform-for-NLP.git',
+                    credentialsId: 'github-token'
             }
         }
 
@@ -65,8 +58,11 @@ pipeline {
     }
 
     post {
-        always {
-            echo "Pipeline terminé."
+        success {
+            echo "Pipeline terminée avec succès !"
+        }
+        failure {
+            echo "Pipeline échouée. Vérifie les logs !"
         }
     }
 }

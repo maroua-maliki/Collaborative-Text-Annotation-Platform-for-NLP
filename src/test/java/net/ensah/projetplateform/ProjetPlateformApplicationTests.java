@@ -1,28 +1,46 @@
 package net.ensah.projetplateform;
 
-import net.ensah.projetplateform.repository.TacheRepository;
-import net.ensah.projetplateform.repository.CoupleTexteRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mock;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.TestPropertySource;
 
-@SpringBootTest
+// Importation de tous vos repositories
+import net.ensah.projetplateform.repository.*;
+
+@SpringJUnitConfig
 @TestPropertySource(properties = {
         "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
 })
 class ProjetPlateformApplicationTests {
 
-    // Simulation du repository des tâches
-    @MockBean
+    @Mock
+    private AnnotateurRepository annotateurRepository;
+
+    @Mock
+    private AnnotationsRepository annotationsRepository;
+
+    @Mock
+    private ClassePossibleRepository classePossibleRepository;
+
+    @Mock
+    private CoupleTexteRepository coupleTexteRepository;
+
+    @Mock
+    private DatasetRepository datasetRepository;
+
+    @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
     private TacheRepository tacheRepository;
 
-    // Simulation du repository des couples de texte (L'erreur venait d'ici !)
-    @MockBean
-    private CoupleTexteRepository coupleTexteRepository;
+    @Mock
+    private UtilisateurRepository utilisateurRepository;
 
     @Test
     void contextLoads() {
-        // Le contexte va maintenant démarrer car les dépendances sont satisfaites par les Mocks
+        // Avec tous ces Mocks, Spring va démarrer sans chercher MySQL
     }
 }

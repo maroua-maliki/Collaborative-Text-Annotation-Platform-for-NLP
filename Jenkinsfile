@@ -1,14 +1,12 @@
 pipeline {
     agent any
 
-    // Charge les outils configurés dans Jenkins
     tools {
         maven 'maven_3'
     }
 
     environment {
-        // Pour Docker Desktop sous Windows, l'IP de l'hôte est souvent 172.17.0.1
-        // ou le nom du conteneur si sur le même réseau.
+        // 'nexus' est le nom du conteneur dans votre docker ps
         NEXUS_REGISTRY = "nexus:8081"
         IMAGE_NAME = "java-app"
         IMAGE_TAG = "v1"
@@ -25,11 +23,11 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                // Le -U force le retéléchargement des fichiers corrompus
+                sh 'mvn -U test'
             }
             post {
                 always {
-                    // Utilisation de double asterisque pour trouver les rapports n'importe où
                     junit '**/target/surefire-reports/*.xml'
                 }
             }
@@ -37,13 +35,12 @@ pipeline {
 
         stage('Build JAR') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn -U clean package -DskipTests'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                // Cette commande nécessite que docker.io soit installé dans le conteneur Jenkins
                 sh 'docker build -t $NEXUS_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .'
             }
         }
@@ -65,11 +62,7 @@ pipeline {
     }
 
     post {
-        success {
-            echo "Pipeline terminée avec succès !"
-        }
-        failure {
-            echo "Pipeline échouée. Vérifiez les logs (Maven ou Docker)."
-        }
+        success { echo "Pipeline terminée avec succès !" }
+        failure { echo "Pipeline échouée. Vérifiez la connexion ou les logs." }
     }
 }

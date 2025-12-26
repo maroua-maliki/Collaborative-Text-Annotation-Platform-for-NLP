@@ -1,15 +1,18 @@
 pipeline {
     agent any
 
+    // Charge l'outil Docker configuré dans Jenkins (Global Tool Configuration)
+    tools {
+        dockerTool 'docker'
+    }
+
     environment {
-        // Nom du container Nexus si Jenkins est dans Docker
         NEXUS_REGISTRY = "nexus:8081"
         IMAGE_NAME = "java-app"
         IMAGE_TAG = "v1"
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 git branch: 'master',
@@ -37,6 +40,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                // Utilisation de sudo si nécessaire ou vérification du binaire
                 sh 'docker build -t $NEXUS_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .'
             }
         }
@@ -49,7 +53,7 @@ pipeline {
                     passwordVariable: 'NEXUS_PASS'
                 )]) {
                     sh '''
-                        docker login $NEXUS_REGISTRY -u $NEXUS_USER -p $NEXUS_PASS
+                        docker login -u $NEXUS_USER -p $NEXUS_PASS $NEXUS_REGISTRY
                         docker push $NEXUS_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
                     '''
                 }
@@ -62,7 +66,7 @@ pipeline {
             echo "Pipeline terminée avec succès !"
         }
         failure {
-            echo "Pipeline échouée. Vérifie les logs !"
+            echo "Pipeline échouée. Vérifie l'installation de Docker sur l'agent Jenkins."
         }
     }
 }

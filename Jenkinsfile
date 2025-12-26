@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    // Charge l'outil Docker configuré dans Jenkins (Global Tool Configuration)
-    tools {
-        dockerTool 'docker'
-    }
-
     environment {
         NEXUS_REGISTRY = "nexus:8081"
         IMAGE_NAME = "java-app"
@@ -40,7 +35,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                // Utilisation de sudo si nécessaire ou vérification du binaire
+                // On utilise directement la commande système
                 sh 'docker build -t $NEXUS_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .'
             }
         }
@@ -66,7 +61,7 @@ pipeline {
             echo "Pipeline terminée avec succès !"
         }
         failure {
-            echo "Pipeline échouée. Vérifie l'installation de Docker sur l'agent Jenkins."
+            echo "Pipeline échouée."
         }
     }
 }

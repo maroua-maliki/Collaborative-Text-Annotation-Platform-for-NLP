@@ -6,8 +6,8 @@ pipeline {
     }
 
     environment {
-        // 'nexus' est le nom du conteneur dans votre docker ps
-        NEXUS_REGISTRY = "nexus:8081"
+        // Changement : On utilise votre adresse IP Wi-Fi et le port 8082
+        NEXUS_REGISTRY = "192.168.1.52:8082"
         IMAGE_NAME = "java-app"
         IMAGE_TAG = "v1"
     }
@@ -23,7 +23,6 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Le -U force le retéléchargement des fichiers corrompus
                 sh 'mvn -U test'
             }
             post {
@@ -41,6 +40,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                // Création de l'image avec le tag de votre IP
                 sh 'docker build -t $NEXUS_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .'
             }
         }
@@ -53,6 +53,7 @@ pipeline {
                     passwordVariable: 'NEXUS_PASS'
                 )]) {
                     sh '''
+                        # Connexion et envoi vers le registre local
                         docker login -u $NEXUS_USER -p $NEXUS_PASS $NEXUS_REGISTRY
                         docker push $NEXUS_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
                     '''
@@ -63,6 +64,6 @@ pipeline {
 
     post {
         success { echo "Pipeline terminée avec succès !" }
-        failure { echo "Pipeline échouée. Vérifiez la connexion ou les logs." }
+        failure { echo "Pipeline échouée. Vérifiez l'IP ou Docker Desktop." }
     }
 }
